@@ -1,0 +1,29 @@
+<html>
+<head>
+</head>
+<body>
+<p>Manage Follows</p>
+
+<p><a href="/home">Home</a> <a href="/friendGroups">Friend Groups</a> <a href="/tags">Manage Tags</a> Manage Follows <a href="/logout">Log Out</a></p>
+
+<form action="/newFollowee" method="POST">
+	<p>New Follow:</p></br>
+	<p><input type="text" name="newFollowee" placeholder="username" required/></p>
+	{% if error %}
+		<p class="error"><strong>Error:</strong> {{error}}</p>
+	{% endif %}
+	{% if notification %}
+		<p class="text">Follow request sent</p>
+	{% endif %}
+	
+</form>
+
+<p>Your Pending Follows:</p>
+<form action="/rejectFollow" method="POST">
+	{% for follower in pendingFollowers %}
+		{{follower.username}} ({{follower.firstName}} {{follower.lastName}}) <input
+	{% endfor %}
+</form>
+
+</body>
+<html>

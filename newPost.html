@@ -2,8 +2,32 @@
 <head>
 </head>
 <body>
+<p>Make a new post</p>
 
+<p>Home <a href="/friendGroups">Friend Groups</a> <a href="/tags">Manage Tags</a> <a href="/follows">Manage Follows</a> <a href="/logout">Log Out</a></p>
 
+<p><a href="/home">Back to Home</a></p>
+
+<form action = "/submitPost" method="POST">
+	<input type = "text" name="filepath" placeholder="Photo Filepath" required/></br>
+	<input type = "text" name="caption" placeholder="Caption"/></br>
+	<p>Share with:</br>
+	<input type = "radio" name="shareWith" value="allFollowers" checked="checked">All Followers</input></br>
+	{% for friendGroup in friendGroups %}
+		<input type="radio" name="shareWith" value={{friendGroup}}>{{friendGroup.groupName}} by
+		{% if friendGroup.creatorUsername!=user %}
+			{{friendGroup.creatorUsername}}
+		{% else %}
+			You
+		{% endif %}
+		</input><br>
+	{% endfor %}
+	</p>
+	<input type = "submit" value = "Post">
+	{% if error %}
+		<p class="error"><strong>Error:</strong> {{error}}</p>
+	{% endif %}
+</form>
 
 </body>
 </html>

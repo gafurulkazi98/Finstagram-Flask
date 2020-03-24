@@ -75,6 +75,7 @@ def home():
         return redirect('/')
     #cursor = conn.cursor();
     #query = 'SELECT filename FROM follow NATURAL JOIN photo WHERE followerUsername = %s ORDER BY postingDate DESC'
+    #query = 'SELECT DISTINCT filename FROM photo NATURAL JOIN share NATURAL JOIN groupMember WHERE memberUsername = %s'
     #cursor.execute(query, (username))
     #data = cursor.fetchall()
     #cursor.close()
@@ -112,14 +113,17 @@ def submitPost():
         ins = 'INSERT INTO photo VALUES(NULL, %s, CURRENT_TIMESTAMP, %s, 0, %s)'
         cursor.execute(ins,(username,filepath,caption))
         conn.commit()
-        query = 'SELECT LAST_INSERT_ID()'
-        pID = cursor.execute(query)
-        #return render_template('debug.html',pID=pID,shareWith=shareWith)
-        groupName = cursor.execute('SELECT %s.groupName',(shareWith))
-        creatorUsername = cursor.execute('SELECT %s.creatorUsername',(shareWith))
-        return render_template('debug.html',gn=groupName,cu=creatorUsername)
+        query = 'SELECT LAST_INSERT_ID();'
+        cursor.execute(query)
+        data = cursor.fetchone()
+        pID = data['LAST_INSERT_ID()']
+        #return render_template('debug.html',data=pID)
+        shareWith_vals=shareWith.split(',')
+        groupName = shareWith_vals[0]
+        creatorUsername = shareWith_vals[1]
         ins = 'INSERT INTO share VALUE(%s,%s,%s)'
         cursor.execute(ins,(pID,groupName,creatorUsername))
+        conn.commit()
     cursor.close()
     return render_template('home.html',user=username)
 
@@ -169,7 +173,7 @@ def authFriendGroup():
         cursor.execute(ins, (newGroupName,username,username))
         conn.commit()
         cursor.close()
-        return render_template("friendGroups.html",user=username)
+        return redirect("friendGroups.html")
     
 @app.route('/follows')
 def follows():
@@ -178,11 +182,46 @@ def follows():
     except:
         return redirect('/')
     cursor = conn.cursor()
-    query = 'SELECT followeeUsername FROM follow WHERE followeeUsername = %s AND followStatus = 0'
+    query = 'SELECT followerUsername FROM follow WHERE followeeUsername = %s AND followStatus = 0'
+    #Ask if it's possible to join this table with PERSON so that I can get the names of the followers
     cursor.execute(query,(username))
-    newFollowers = cursor.fetchall()
+    pFollows = cursor.fetchall()
     cursor.close()
-    return render_template("follows.html",newFollowers)
+    return render_template("follows.html",user=username,pendingFollows=pFollows)
+
+@app.route('/newFollowee', methods = ['GET','POST'])
+def newFollowee():
+    try:
+        username=session['username']
+    except:
+        return redirect('/')
+    cursor = conn.cursor()
+    followeeUsername = request.form['newFollowee']
+    query = 'SELECT * FROM person WHERE username = %s'
+    cursor.execute(query,(followeeUsername))
+    data = cursor.fetchone()
+    if followeeUsername == username:
+        error = "Invalid username"
+        cursor.close()
+        return render_template("follows.html",user=username,error=error)
+    if(data):
+        ins = 'INSERT INTO follow VALUES(%s,%s,0)'
+        cursor.execute(ins,(username,followeeUsername))
+        conn.commit()
+        cursor.close()
+        return render_template("follows.html",user=username,notification=1)
+    else:
+        error = "Username not found"
+        cursor.close()
+        return render_template("follows.html",user=username,error=error)
+
+@app.route('/setFollows')
+def setFollows():
+    try:
+        username=session['username']
+    except:
+        return redirect('/')
+    
 
 @app.route('/logout')
 def logout():

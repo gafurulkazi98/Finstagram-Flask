@@ -14,7 +14,7 @@
 	<p>Share with:</br>
 	<input type = "radio" name="shareWith" value="allFollowers" checked="checked">All Followers</input></br>
 	{% for friendGroup in friendGroups %}
-		<input type="radio" name="shareWith" value={{friendGroup}}>{{friendGroup.groupName}} by
+		<input type="radio" name="shareWith" value={{friendGroup.groupName}},{{friendGroup.creatorUsername}}>{{friendGroup.groupName}} by
 		{% if friendGroup.creatorUsername!=user %}
 			{{friendGroup.creatorUsername}}
 		{% else %}

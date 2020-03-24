@@ -1,8 +1,10 @@
 Finstagram Checklist:
 -Log In (Done)
 -View photo feed (In Progress)
--Post photos & designate who sees them (In Progress)
+-Post photos & designate who sees them (Done)
 -View info on photos
--Send follow requests
+-Send follow requests (Done)
 -Accept & reject follow requests
 -Create Friend Groups (Done)
+-Search users
+-Tag system

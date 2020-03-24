@@ -13,7 +13,11 @@
 </form>
 -->
 
-<a href="/newPost">New Post</a>
+<a href="/newPost">New Post</a></br>
+
+{% for photo in feed %}
+	{{photo.filename}}
+{% endfor %}
 </body>
 
 </html>

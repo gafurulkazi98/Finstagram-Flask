@@ -7,6 +7,8 @@ Created on Thu Mar 19 16:33:11 2020
 
 from flask import Flask, render_template, request, session, url_for, redirect
 import pymysql.cursors
+import hashlib
+SALT = '7h1515my54l7d0n7judg3m30k'
 
 app = Flask(__name__)
 
@@ -29,11 +31,12 @@ def register():
 @app.route('/loginAuth', methods=['GET', 'POST'])
 def loginAuth():
     username = request.form['username']
-    password = request.form['password']
+    password = request.form['password'] + SALT
+    hashword = hashlib.sha256(password.encode('utf-8')).hexdigest()
     
     cursor = conn.cursor()
     query = 'SELECT * FROM person WHERE username = %s and password = %s'
-    cursor.execute(query, (username, password))
+    cursor.execute(query, (username, hashword))
     data = cursor.fetchone()
     cursor.close()
     if(data):
@@ -45,8 +48,8 @@ def loginAuth():
 @app.route('/registerAuth', methods=['GET', 'POST'])
 def registerAuth():
     username = request.form['username']
-    password = request.form['password']
-    vpassword = request.form['vpassword']
+    password = request.form['password'] + SALT
+    vpassword = request.form['vpassword'] + SALT
     firstName = request.form['firstName']
     lastName = request.form['lastName']
     email = request.form['email']
@@ -60,12 +63,13 @@ def registerAuth():
     else:
         if password!=vpassword:
             return render_template('register.html', error = "Passwords do not match")
+        hashword = hashlib.sha256(password.encode('utf-8')).hexdigest()
         ins = 'INSERT INTO person VALUES(%s, %s, %s, %s, %s)'
-        cursor.execute(ins, (username, password, firstName, lastName, email))
+        cursor.execute(ins, (username, hashword, firstName, lastName, email))
         conn.commit()
         cursor.close()
         session['username']=username
-        return render_template('home.html',user=username)
+        return redirect(url_for('home'))
     
 @app.route('/home')
 def home():
@@ -100,24 +104,23 @@ def submitPost():
         username=session['username']
     except:
         return redirect('/')
-    filepath = request.form['filepath']
-    #How to use BLOB datatype
+    filepath = request.files['filepath']
+    photoData = filepath.read()
+    #return render_template("debug.html",filepath=filepath,photoData=photoData)
     caption = request.form['caption']
     shareWith = request.form['shareWith']
+    
     cursor=conn.cursor()
-    if shareWith == "allFollowers":
-        ins = 'INSERT INTO photo VALUES(NULL,%s, CURRENT_TIMESTAMP, %s, 1, %s)'
-        cursor.execute(ins,(username,filepath,caption))
-        conn.commit()
-    else:
-        ins = 'INSERT INTO photo VALUES(NULL, %s, CURRENT_TIMESTAMP, %s, 0, %s)'
-        cursor.execute(ins,(username,filepath,caption))
-        conn.commit()
+    
+    ins = 'INSERT INTO photo VALUES(NULL,%s, CURRENT_TIMESTAMP, %s, %s, %s)'
+    cursor.execute(ins,(username,photoData,shareWith == "allFollowers",caption))
+    conn.commit()
+    
+    if not shareWith == "allFollowers":
         query = 'SELECT LAST_INSERT_ID();'
         cursor.execute(query)
         data = cursor.fetchone()
         pID = data['LAST_INSERT_ID()']
-        #return render_template('debug.html',data=pID)
         shareWith_vals=shareWith.split(',')
         groupName = shareWith_vals[0]
         creatorUsername = shareWith_vals[1]
@@ -181,8 +184,8 @@ def follows():
         username=session['username']
     except:
         return redirect('/')
-    cursor = conn.cursor()
-    query = 'SELECT followerUsername FROM follow WHERE followeeUsername = %s AND followStatus = 0'
+    cursor = conn.cursor()  
+    query = 'SELECT followerUsername,first_name,last_name FROM follow JOIN person ON followerUsername = username WHERE followeeUsername = %s AND followStatus = 0'
     #Ask if it's possible to join this table with PERSON so that I can get the names of the followers
     cursor.execute(query,(username))
     pFollows = cursor.fetchall()
@@ -215,14 +218,26 @@ def newFollowee():
         cursor.close()
         return render_template("follows.html",user=username,error=error)
 
-@app.route('/setFollows')
+@app.route('/setFollows', methods = ['GET', 'POST'])
 def setFollows():
     try:
         username=session['username']
     except:
         return redirect('/')
+    cursor = conn.cursor()
+    query = 'SELECT followerUsername FROM follow JOIN person ON followeeUsername = username WHERE followeeUsername = %s AND followStatus = 0'
+    cursor.execute(query,(username))
+    followList = cursor.fetchall()
+    for f in followList:
+        action = request.form[f]
+        if(action):
+            stmt = 'UPDATE follows SET followStatus = 1 WHERE followerUsername = %s AND followeeUsername = %s'
+        else:
+            stmt = 'DELETE FROM follow WHERE followerUsername = %s AND followeeUsername = %s'
+        cursor.execute(stmt,(f,username))
+        conn.commit()
+    return render_template("follows.html",user=username)
     
-
 @app.route('/logout')
 def logout():
     session.pop('username')

@@ -8,8 +8,8 @@
 
 <p><a href="/home">Back to Home</a></p>
 
-<form action = "/submitPost" method="POST">
-	<input type = "text" name="filepath" placeholder="Photo Filepath" required/></br>
+<form action = "/submitPost" method="POST" enctype="multipart/form-data">
+	<input type = "file" name="filepath" accept="image/png, image/jpeg, image/img, image/bmp" required/></br>
 	<input type = "text" name="caption" placeholder="Caption"/></br>
 	<p>Share with:</br>
 	<input type = "radio" name="shareWith" value="allFollowers" checked="checked">All Followers</input></br>

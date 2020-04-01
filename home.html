@@ -7,7 +7,7 @@
 <p>Home <a href="/friendGroups">Friend Groups</a> <a href="/tags">Manage Tags</a> <a href="/follows">Manage Follows</a> <a href="/logout">Log Out</a></p>
 
 <!--
-<form action="/searchUser" method="POST">
+<form action="/searchUser" method="GET">
 	<input type="text" name="searchedUser" placeholder="Search users"/>
 	<input type="submit" value=search />
 </form>
@@ -15,9 +15,13 @@
 
 <a href="/newPost">New Post</a></br>
 
-{% for photo in feed %}
-	{{photo.filename}}
-{% endfor %}
+<form action="/seePost" method="GET">
+	{% for photo in feed %}
+		<p>{{photo.filename}}</br>
+		
+		</p>
+	{% endfor %}
+</form>
 </body>
 
 </html>

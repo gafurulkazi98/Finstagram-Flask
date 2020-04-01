@@ -19,11 +19,11 @@
 </form>
 
 <p>Your Pending Follows:</p>
-<form action="/setFollows" method="POST">
-	{% for follower in pendingFollows %}
-		{{follower.followerUsername}}
-	{% endfor %}
-</form>
+{% for follower in pendingFollows %}
+	<form action="/setFollows" method="POST">
+		{{follower.followerUsername}} ({{follower.first_name}} {{follower.last_name}})<input type="radio" name="accdec" value=1>Accept</input> <input type="radio" name="accdec" value=0>Decline</input> <input type = "submit" value = "Confirm"> </br>
+	</form>
+{% endfor %}
 
 
 </body>

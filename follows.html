@@ -21,7 +21,7 @@
 <p>Your Pending Follows:</p>
 {% for follower in pendingFollows %}
 	<form action="/setFollows" method="POST">
-		{{follower.followerUsername}} ({{follower.first_name}} {{follower.last_name}})<input type="radio" name="accdec" value=1>Accept</input> <input type="radio" name="accdec" value=0>Decline</input> <input type = "submit" value = "Confirm"> </br>
+		{{follower.followerUsername}} ({{follower.first_name}} {{follower.last_name}})<input type="radio" name="action" value={{follower.followerUsername}},1>Accept</input> <input type="radio" name="action" value={{follower.followerUsername}},0>Decline</input> <input type = "submit" value = "Confirm"> </br>
 	</form>
 {% endfor %}
 

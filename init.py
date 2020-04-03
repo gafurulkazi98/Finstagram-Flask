@@ -22,7 +22,11 @@ conn = pymysql.connect(host='localhost',
 
 @app.route('/')
 def login():
-    return render_template('login.html')
+    try:
+        username = session['username']
+        return redirect(url_for('home'))
+    except:
+        return render_template('login.html')
 
 @app.route('/register')
 def register():
@@ -77,13 +81,12 @@ def home():
         username=session['username']
     except:
         return redirect('/')
-    #cursor = conn.cursor();
-    #query = 'SELECT filename FROM follow NATURAL JOIN photo WHERE followerUsername = %s ORDER BY postingDate DESC'
-    #query = 'SELECT DISTINCT filename FROM photo NATURAL JOIN share NATURAL JOIN groupMember WHERE memberUsername = %s'
-    #cursor.execute(query, (username))
-    #data = cursor.fetchall()
-    #cursor.close()
-    return render_template('home.html',user=username)#,feed=data)
+    cursor = conn.cursor();
+    query = 'SELECT pID,filepath FROM follow JOIN photo ON followeeUsername = posterUsername WHERE followerUsername = %s UNION SELECT pID,filepath FROM photo NATURAL JOIN share NATURAL JOIN friendGroup NATURAL JOIN groupmember WHERE memberUsername = %s'
+    cursor.execute(query, (username,username))
+    data = cursor.fetchall()
+    cursor.close()
+    return render_template('home.html',user=username,feed=data)
 
 @app.route('/newPost')
 def newPost():
@@ -176,7 +179,7 @@ def authFriendGroup():
         cursor.execute(ins, (newGroupName,username,username))
         conn.commit()
         cursor.close()
-        return redirect("friendGroups.html")
+        return redirect("friendGroups")
     
 @app.route('/follows')
 def follows():
@@ -225,18 +228,22 @@ def setFollows():
     except:
         return redirect('/')
     cursor = conn.cursor()
-    query = 'SELECT followerUsername FROM follow JOIN person ON followeeUsername = username WHERE followeeUsername = %s AND followStatus = 0'
-    cursor.execute(query,(username))
-    followList = cursor.fetchall()
-    for f in followList:
-        action = request.form[f]
-        if(action):
-            stmt = 'UPDATE follows SET followStatus = 1 WHERE followerUsername = %s AND followeeUsername = %s'
-        else:
-            stmt = 'DELETE FROM follow WHERE followerUsername = %s AND followeeUsername = %s'
-        cursor.execute(stmt,(f,username))
-        conn.commit()
-    return render_template("follows.html",user=username)
+    #query = 'SELECT followerUsername FROM follow JOIN person ON followeeUsername = username WHERE followeeUsername = %s AND followStatus = 0'
+    #cursor.execute(query,(username))
+    #followList = cursor.fetchall()
+    #return render_template("debug.html",followList=followList)
+    #for f in followList:
+    action_vals = request.form['action']
+    action_split = action_vals.split(',')
+    followerUsername = action_split[0]
+    action = int(action_split[1])
+    if(action):
+        stmt = 'UPDATE follow SET followStatus = 1 WHERE followerUsername = %s AND followeeUsername = %s'
+    else:
+        stmt = 'DELETE FROM follow WHERE followerUsername = %s AND followeeUsername = %s'
+    cursor.execute(stmt,(followerUsername,username))
+    conn.commit()
+    return redirect("follows")
     
 @app.route('/logout')
 def logout():

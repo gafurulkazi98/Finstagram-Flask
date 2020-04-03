@@ -1,0 +1,112 @@
+OUT OF DATE
+
+create table Person
+	(username	VARCHAR(20),
+	password	VARCHAR(20),
+	first_name	VARCHAR(20),
+	last_name	VARCHAR(20),
+	email		VARCHAR(20),
+	
+	primary key(username)
+	);
+
+create table Photo
+	(pID		INT,
+	posterUsername	VARCHAR(20),
+	postingDate	DATETIME,
+	filePath	VARCHAR(20),
+	allFollowers	BOOLEAN,
+	caption		VARCHAR(20),
+	
+	primary key(pID,posterUsername),
+	
+	foreign key(posterUsername)
+		references Person(username)
+	);
+
+create table FriendGroup
+	(groupName	VARCHAR(20),
+	creatorUsername	VARCHAR(20),
+	description	VARCHAR(20),
+	
+	primary key(groupName,creatorUsername),
+	
+	foreign key(creatorUsername)
+		references Person(username)
+	);
+
+create table Follow
+	(followerUsername	VARCHAR(20),
+	followeeUsername	VARCHAR(20),
+	followStatus		BOOLEAN,
+	
+	primary key(followerUsername,followeeUsername),
+
+	foreign key(followerUsername)
+		references Person(username),
+	
+	foreign key(followeeUsername)
+		references Person(username)
+	);
+
+create table Tag
+	(pID		INT,
+	taggedUsername	VARCHAR(20),
+	tagStatus	BOOLEAN,
+
+	primary key(pID,taggedUsername),
+	
+	foreign key(pID)
+		references Photo(pID),
+	
+	foreign key(taggedUsername)
+		references Person(username)
+	);
+
+create table Reaction
+	(pID		INT,
+	reactorUsername	VARCHAR(20),
+	reactionTime	DATETIME,
+	comment		VARCHAR(20),
+	emoji		VARCHAR(20),
+
+	primary key(pID,reactorUsername),
+	
+	foreign key(pID)
+		references Photo(pID),
+	
+	foreign key(reactorUsername)
+		references Person(username)
+	);
+
+create table GroupMember
+	(groupName		VARCHAR(20),
+	creatorUsername		VARCHAR(20),
+	memberUsername		VARCHAR(20),
+	
+	primary key(groupName,creatorUsername,memberUsername),
+	
+	foreign key(groupName,creatorUsername)
+		references FriendGroup(groupName,creatorUsername),
+	
+	foreign key(memberUsername)
+		references Person(username)
+	);
+
+create table Share
+	(pID		INT,
+	groupName	VARCHAR(20),
+	creatorUsername	VARCHAR(20),
+	
+	primary key(pID,groupName,creatorUsername),
+	
+	foreign key(pID)
+		references Photo(pID),
+	
+	foreign key(groupName,creatorUsername)
+		references FriendGroup(groupName,creatorUsername)
+	);
+
+SELECT DISTINCT pID
+FROM GroupMember NATURAL JOIN FriendGroup NATURAL JOIN Share
+WHERE memberUsername='Ann'

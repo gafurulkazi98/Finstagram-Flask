@@ -1,0 +1,42 @@
+<head>
+</head>
+<body>
+<p>Welcome to Finstagram, {{user}}!</p>
+
+<p><a href ="/home">Home</a> <a href="/friendGroups">Friend Groups</a> <a href="/tags">Manage Tags</a> <a href="/follows">Manage Follows</a> <a href="/logout">Log Out</a></p>
+
+<p>Photo ID: {{pData.pID}}</br>
+<img src="/templates/photos/{{pData.pID}}" alt="/templates/photos/{{pData.pID}}.jpg"/></br>
+{{pData.caption}}</br>
+Posted By: {{pData.posterUsername}} ({{pData.first_name}} {{pData.last_name}}) {% if pData.posterUsername == user %}[<strong>You</strong>]{% endif %}  on {{pData.postingDate}}</br></p>
+
+<p>Tags</br>
+{% for tag in tData %}
+	{{tag.username}} ({{tag.first_name}} {{tag.last_name}})</br>
+{% endfor %}
+{% if error == '1' %}
+	<p class='error'><strong>Error:</strong> Invalid username</p>
+{% endif %}
+<form action="/submitTag?pID={{pData.pID}}" method="POST"> <input type="text" name="newTag" placeholder="Add tag"> <input type="submit" value="Add Tag"></form>
+</p>
+
+
+<p>Reactions</br>
+<form action="/submitReaction?pID={{pData.pID}}" method="POST" name="reaction">
+	<input type="radio" name="emoji" value="👍" checked="checked">👍</input>
+	<input type="radio" name="emoji" value="❤️">❤️</input>
+	<input type="radio" name="emoji" value="😄">😄</input>
+	<input type="radio" name="emoji" value="😮">😮</input>
+	<input type="radio" name="emoji" value="😢">😢</input>
+	<input type="radio" name="emoji" value="😡">😡</input></br>
+	
+	<input type="text" name="comment" placeholder="comment" size="31">
+	<input type="submit" value="Post">
+</form>
+		
+{% for reaction in rData %}
+	{{reaction.reactorUsername}} [{{reaction.reactionTime}}]: {{reaction.emoji}} {{reaction.comment}}</br>
+{% endfor %}
+</p>
+
+</html>

@@ -7,10 +7,10 @@
 <p><a href="/home">Home</a> <a href="/friendGroups">Friend Groups</a> <a href="/tags">Manage Tags</a> Manage Follows <a href="/logout">Log Out</a></p>
 
 <form action="/newFollowee" method="POST">
-	<p>Send a new follow request:</p>
-	<p><input type="text" name="newFollowee" placeholder="username" required/><input type="submit" value="Send"/></p>
+	<p>Send a new follow request:</br>
+	<input type="text" name="newFollowee" placeholder="username" required/><input type="submit" value="Send"/></p>
 	{% if error %}
-		<p class="error"><strong>Error:</strong> {{error}}</p>
+		<p class="error"><strong>Error:</strong> Invalid username</p>
 	{% endif %}
 	{% if notification %}
 		<p class="text">Follow request sent</p>
@@ -18,13 +18,22 @@
 	
 </form>
 
-<p>Your Pending Follows:</p>
+<p>Your Pending Follows:</br>
 {% for follower in pendingFollows %}
 	<form action="/setFollows" method="POST">
-		{{follower.followerUsername}} ({{follower.first_name}} {{follower.last_name}})<input type="radio" name="action" value={{follower.followerUsername}},1>Accept</input> <input type="radio" name="action" value={{follower.followerUsername}},0>Decline</input> <input type = "submit" value = "Confirm"> </br>
+		{{follower.followerUsername}} ({{follower.first_name}} {{follower.last_name}})
+		<input type="radio" name="action" value={{follower.followerUsername}},1>Accept</input>
+		<input type="radio" name="action" value={{follower.followerUsername}},0>Decline</input>
+		<input type = "submit" value = "Confirm"> </br>
 	</form>
+</p>
 {% endfor %}
 
+<p>Your Accepted Follows:</br>
+{% for follower in acceptedFollows %}
+	{{follower.followerUsername}} ({{follower.first_name}} {{follower.last_name}})</br>
+{% endfor %}
+</p>
 
 </body>
 <html>

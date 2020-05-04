@@ -6,8 +6,17 @@
 
 <p><a href="/home">Home</a> Friend Groups <a href="/tags">Manage Tags</a> <a href="/follows">Manage Follows</a> <a href="/logout">Log Out</a></p>
 
-<p><a href="/newFriendGroup">Create a new Friend Group</a></p>
+<p>Create a new friend group:
+<form action = "/authFriendGroup" method="POST">
+	<input type = "text" name="newGroupName" placeholder="New Friend Group" required/></br>
+	<input type = "text" name="description" placeholder="Group Description" required/></br>
+	<input type = "submit" value = "Create Group"></br>
+	{% if error %}
+		<p class="error"><strong>Error:</strong> You already own a friend group with this name</p></br>
+	{% endif %}
 
+</p>	
+	
 <style type="text/css">
 	table, th, td{
 		border: 1px solid black;

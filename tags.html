@@ -1,0 +1,20 @@
+<html>
+<head>
+</head>
+<body>
+<p>Manage Tags</p>
+
+<p><a href ="/home">Home</a> <a href="/friendGroups">Friend Groups</a> Manage Tags <a href="/follows">Manage Follows</a> <a href="/logout">Log Out</a></p>
+
+{% for tag in tagList %}
+	<form action="/setTags" method="POST">
+		<p>Photo ID: {{tag.pID}}, Posted by: {{tag.posterUsername}} on {{tag.postingDate}}
+			(<a href="/viewPhoto?pID={{tag.pID}}">See</a>)
+		<input type="radio" name="action" value={{tag.pID}},1>Accept</input>
+		<input type="radio" name="action" value={{tag.pID}},0>Delete</input>
+		<input type = "submit" value = "Confirm"> </br></p>
+	</form>
+{% endfor %}
+
+</body>
+</html>

@@ -2,13 +2,11 @@ Finstagram Checklist:
 <<<<<<< HEAD
 =======
 -Registration and Login (Done)
--View photo feed (In Progress)
+-View photo feed (95% Done, photos can't display)
 -Post photos & designate who sees them (Done)
--View info on photos
+-View info on photos (Done)
 -Manage Follows (Done)
 -Create Friend Groups (Done)
-
-Planned Features:
--Manage Tags
--React to a photo
+-Manage Tags (Done)
+-React to a photo (Done)
 >>>>>>> 323d9384aba12f35794ff9088599cbe2f8a79796

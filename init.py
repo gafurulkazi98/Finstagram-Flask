@@ -52,6 +52,7 @@ def login():
 @app.route('/register')
 def register():
     error_arg = request.args.get('error')
+    errorStr = None
     if error_arg == "1":
         errorStr = "Invalid login or username"
     elif error_arg == "2":

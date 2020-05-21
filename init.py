@@ -3,7 +3,7 @@
 Finstagram Code by Gafurul (Rafi) Islam Kazi - gik211
 """
 
-from flask import Flask, flash, render_template, request, session, url_for, redirect
+from flask import Flask, flash, render_template, request, session, url_for, redirect, send_from_directory
 import pymysql.cursors
 import hashlib
 import os
@@ -101,6 +101,10 @@ def registerAuth():
         cursor.close()
         session['username']=username
         return redirect(url_for('home'))
+    
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'],filename)
     
 @app.route('/home')
 def home():

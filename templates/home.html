@@ -1,0 +1,24 @@
+<html>
+<head>
+</head>
+<body>
+<p>Welcome to Finstagram, {{user}}!</p>
+
+<p>Home <a href="/friendGroups">Friend Groups</a> <a href="/tags">Manage Tags</a> <a href="/follows">Manage Follows</a> <a href="/logout">Log Out</a></p>
+
+<!--
+<form action="/searchUser" method="GET">
+	<input type="text" name="searchedUser" placeholder="Search users"/>
+	<input type="submit" value=search />
+</form>
+-->
+
+<a href="/newPost">New Post</a></br>
+
+{% for photo in feed %}
+	<p><img src="/uploads/{{photo.pID}}.jpg" width=400px height=400px alt="{{photo.pID}}.jpg"/></br>
+	Photo ID: {{photo.pID}} <a href="/viewPhoto?pID={{photo.pID}}">More</a></p>
+{% endfor %}
+</body>
+
+</html>

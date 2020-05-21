@@ -6,7 +6,7 @@
 <p><a href ="/home">Home</a> <a href="/friendGroups">Friend Groups</a> <a href="/tags">Manage Tags</a> <a href="/follows">Manage Follows</a> <a href="/logout">Log Out</a></p>
 
 <p>Photo ID: {{pData.pID}}</br>
-<img src="/uploads/{{pData.pID}}" alt="{{pData.pID}}.jpg"/></br>
+<img src="/uploads/{{pData.pID}}.jpg" alt="{{pData.pID}}.jpg"/></br>
 {{pData.caption}}</br>
 Posted By: {{pData.posterUsername}} ({{pData.first_name}} {{pData.last_name}}) {% if pData.posterUsername == user %}[<strong>You</strong>]{% endif %}  on {{pData.postingDate}}</br></p>
 

@@ -116,27 +116,20 @@ def home():
     query = 'SELECT DISTINCT pID,postingDate,posterUsername FROM follow JOIN photo ON followeeUsername = posterUsername WHERE followerUsername = %s AND followStatus = 1 UNION SELECT pID,postingDate,posterUsername FROM photo WHERE (pID) IN (SELECT pID FROM share WHERE (groupName,creatorUsername) IN (SELECT groupName,creatorUsername FROM groupmember WHERE memberUsername = %s)) UNION SELECT pID,postingDate,posterUsername FROM photo WHERE posterUsername = %s ORDER BY postingDate DESC'
     cursor.execute(query, (username,username,username))
     data = cursor.fetchall()
-    #readFile('templates/photos/1.jpg')
-    # for line in data:
-    #     pID = line['pID']
-    #     line['filedata'] = readFile(app.config['UPLOAD_FOLDER']+"/"+str(pID)+".jpg")
-    #return render_template('debug.html',feed=data,photoData=readFile("templates/photo5.jpg"))
     cursor.close()
     return render_template('home.html',user=username,feed=data)
 
-@app.route('/viewPhoto', methods=['GET','POST'])
-def viewPhoto():
+@app.route('/viewPhoto/<pID>', methods=['GET','POST'])
+def viewPhoto(pID):
     try:
         username=session['username']
     except:
         return redirect('/')
-    pID = request.args.get('pID')
     error = request.args.get('error')
     cursor = conn.cursor()
     query = 'SELECT pID,caption,posterUsername,postingDate,first_name,last_name FROM photo JOIN person ON posterUsername=username WHERE pID = %s'
     cursor.execute(query,(pID))
     photoData = cursor.fetchone()
-    #photoData['filepath'] = b64encode(photoData['filepath']).decode("utf-8")
     
     query = 'SELECT reactorUsername,reactionTime,comment,emoji FROM reaction WHERE pID = %s ORDER BY reactionTime DESC'
     cursor.execute(query,(pID))

@@ -33,10 +33,26 @@ Posted By: {{pData.posterUsername}} ({{pData.first_name}} {{pData.last_name}}) {
 	<input type="text" name="comment" placeholder="comment" size="31">
 	<input type="submit" value="Post">
 </form>
-		
+
+<style type="text/css">
+	table, tr{
+		border: 1px solid black;
+	}
+</style>
+
+<table>
+    <th>User</th>
+    <th>Time</th>
+    <th>Reaction</th>
+    
 {% for reaction in rData %}
-	{{reaction.reactorUsername}} [{{reaction.reactionTime}}]: {{reaction.emoji}} {{reaction.comment}}</br>
+	<tr>
+    	<td>{{reaction.reactorUsername}}</td>
+    	<td>[{{reaction.reactionTime}}]</td>
+    	<td>{{reaction.emoji}} {{reaction.comment}}</td>
+    </tr>
 {% endfor %}
+</table>
 </p>
 
 </html>

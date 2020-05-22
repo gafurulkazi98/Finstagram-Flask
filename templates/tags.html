@@ -9,7 +9,7 @@
 {% for tag in tagList %}
 	<form action="/setTags" method="POST">
 		<p>Photo ID: {{tag.pID}}, Posted by: {{tag.posterUsername}} on {{tag.postingDate}}
-			(<a href="/viewPhoto?pID={{tag.pID}}">See</a>)
+			(<a href="/viewPhoto/{{tag.pID}}">See</a>)
 		<input type="radio" name="action" value={{tag.pID}},1>Accept</input>
 		<input type="radio" name="action" value={{tag.pID}},0>Delete</input>
 		<input type = "submit" value = "Confirm"> </br></p>

@@ -17,7 +17,7 @@
 
 {% for photo in feed %}
 	<p><img src="/uploads/{{photo.pID}}.jpg" width=400px height=400px alt="{{photo.pID}}.jpg"/></br>
-	Photo ID: {{photo.pID}} <a href="/viewPhoto?pID={{photo.pID}}">More</a></p>
+	Photo ID: {{photo.pID}} <a href="/viewPhoto/{{photo.pID}}">More</a></p>
 {% endfor %}
 </body>
 

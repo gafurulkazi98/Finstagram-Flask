@@ -10,7 +10,7 @@
 {{pData.caption}}</br>
 Posted By: {{pData.posterUsername}} ({{pData.first_name}} {{pData.last_name}}) {% if pData.posterUsername == user %}[<strong>You</strong>]{% endif %}  on {{pData.postingDate}}</br></p>
 
-<p>Tags</br>
+<p><strong>Tags</strong> ({{ tCount.c }})</br>
 {% for tag in tData %}
 	{{tag.username}} ({{tag.first_name}} {{tag.last_name}})</br>
 {% endfor %}
@@ -21,7 +21,7 @@ Posted By: {{pData.posterUsername}} ({{pData.first_name}} {{pData.last_name}}) {
 </p>
 
 
-<p>Reactions</br>
+<p><strong>Reactions</strong> ({{ rCount.c }})</br>
 <form action="/submitReaction?pID={{pData.pID}}" method="POST" name="reaction">
 	<input type="radio" name="emoji" value="👍" checked="checked">👍</input>
 	<input type="radio" name="emoji" value="❤️">❤️</input>

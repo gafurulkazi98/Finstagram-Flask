@@ -3,14 +3,16 @@
 Finstagram Code by Gafurul (Rafi) Islam Kazi - gik211
 """
 
-from flask import Flask, flash, render_template, request, session, url_for, redirect, send_from_directory
+#cd "Documents\GitHub\Finstagram
+
+from flask import Flask, render_template, request, session, url_for, redirect, send_from_directory
 import pymysql.cursors
 import hashlib
 import os
 SALT = '7h1515my54l7d0n7judg3m30k'
 
 app = Flask(__name__)
-UPLOAD_FOLDER = 'templates/photos'
+UPLOAD_FOLDER = 'photos'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 conn = pymysql.connect(host='localhost',
@@ -113,6 +115,7 @@ def home():
     except:
         return redirect('/')
     cursor = conn.cursor()
+    #Retrieves posts visible to this user
     query = 'SELECT DISTINCT pID,postingDate,posterUsername FROM follow JOIN photo ON followeeUsername = posterUsername WHERE followerUsername = %s AND followStatus = 1 UNION SELECT pID,postingDate,posterUsername FROM photo WHERE (pID) IN (SELECT pID FROM share WHERE (groupName,creatorUsername) IN (SELECT groupName,creatorUsername FROM groupmember WHERE memberUsername = %s)) UNION SELECT pID,postingDate,posterUsername FROM photo WHERE posterUsername = %s ORDER BY postingDate DESC'
     cursor.execute(query, (username,username,username))
     data = cursor.fetchall()
@@ -122,11 +125,20 @@ def home():
 @app.route('/viewPhoto/<pID>', methods=['GET','POST'])
 def viewPhoto(pID):
     try:
-        username=session['username']
+        username = session['username']
     except:
         return redirect('/')
+    
     error = request.args.get('error')
     cursor = conn.cursor()
+    
+    # Is this post visible to this user?
+    query = 'SELECT pID FROM follow JOIN photo ON followeeUsername = posterUsername WHERE followerUsername = %s AND followStatus = 1 AND pID = %s UNION SELECT pID FROM photo WHERE pID = %s AND (pID) IN (SELECT pID FROM share WHERE (groupName,creatorUsername) IN (SELECT groupName,creatorUsername FROM groupmember WHERE memberUsername = %s)) UNION SELECT pID FROM photo WHERE posterUsername = %s AND pID = %s'
+    cursor.execute(query,(username,pID,pID,username,username,pID))
+    visible = cursor.fetchone()
+    if visible==None:
+        return render_template('cannotViewPhoto.html',user=username)
+        
     query = 'SELECT pID,caption,posterUsername,postingDate,first_name,last_name FROM photo JOIN person ON posterUsername=username WHERE pID = %s'
     cursor.execute(query,(pID))
     photoData = cursor.fetchone()
@@ -134,12 +146,19 @@ def viewPhoto(pID):
     query = 'SELECT reactorUsername,reactionTime,comment,emoji FROM reaction WHERE pID = %s ORDER BY reactionTime DESC'
     cursor.execute(query,(pID))
     reactionData = cursor.fetchall()
+    query = 'SELECT COUNT(*) AS c FROM reaction WHERE pID = %s'
+    cursor.execute(query,(pID))
+    reactionCount = cursor.fetchone()
     
     query = 'SELECT username,first_name,last_name FROM person WHERE (username) IN (SELECT taggedUsername FROM tag WHERE tagStatus = 1 AND pID = %s)'
     cursor.execute(query,(pID))
     tagData = cursor.fetchall()
+    query = 'SELECT COUNT(*) AS c FROM person WHERE (username) IN (SELECT taggedUsername FROM tag WHERE tagStatus = 1 AND pID = %s)'
+    cursor.execute(query,(pID))
+    tagCount = cursor.fetchone()
     
-    return render_template('viewPhoto.html',user=username,pData=photoData,rData=reactionData,tData=tagData,error=error)
+    cursor.close()
+    return render_template('viewPhoto.html',user=username,pData=photoData,rData=reactionData,rCount=reactionCount,tData=tagData,tCount=tagCount,error=error)
 
 @app.route('/submitTag',methods=['GET','POST'])
 def submitTag():
@@ -216,7 +235,7 @@ def newPost():
     cursor.execute(query,(username))
     data=cursor.fetchall()
     cursor.close()
-    return render_template('newPost.html',user=username,friendGroups=data)
+    return render_template('newPost.html',friendGroups=data)
 
 @app.route('/submitPost', methods=['GET','POST'])
 def submitPost():
@@ -225,9 +244,6 @@ def submitPost():
     except:
         return redirect('/')
     file = request.files['file']
-    ext = file.filename.rsplit('.', 1)[1].lower()
-    #photo = b64encode(photoData).decode("utf-8")
-    #return render_template("debug.html",photo=photo)
     caption = request.form['caption']
     shareWith = request.form['shareWith']
     
@@ -264,7 +280,7 @@ def friendGroup():
     cursor.execute(query,(username))
     data = cursor.fetchall()
     cursor.close()
-    return render_template('friendGroups.html',user=username,friendGroups=data,error=error)
+    return render_template('friendGroups.html',friendGroups=data,error=error)
 
 @app.route('/authFriendGroup', methods = ['GET', 'POST'])
 def authFriendGroup():
@@ -278,7 +294,6 @@ def authFriendGroup():
     query = 'SELECT groupName,creatorUsername FROM friendGroup WHERE groupName = %s AND creatorUsername = %s'
     cursor.execute(query,(newGroupName,username))
     data = cursor.fetchone()
-    error = None
     if(data):
         cursor.close()
         return redirect("/friendGroups?error=1")
@@ -308,7 +323,7 @@ def follows():
     cursor.execute(query,(username))
     aFollows = cursor.fetchall()
     cursor.close()
-    return render_template("follows.html",user=username,pendingFollows=pFollows,acceptedFollows=aFollows,error=error,notification=notif)
+    return render_template("follows.html",pendingFollows=pFollows,acceptedFollows=aFollows,error=error,notification=notif)
 
 @app.route('/newFollowee', methods = ['GET','POST'])
 def newFollowee():
@@ -364,8 +379,6 @@ def tags():
     query = 'SELECT pID,posterUsername,postingDate FROM photo WHERE (pID) IN (SELECT pID FROM tag WHERE taggedUsername = %s and tagStatus = 0)'
     cursor.execute(query,(username))
     tagList = cursor.fetchall()
-    #for tag in tagList:
-   #     tag['filepath'] = b64encode(tag['filepath']).decode("utf-8")
     return render_template('tags.html',tagList = tagList)
     
 @app.route('/setTags', methods = ['GET','POST'])

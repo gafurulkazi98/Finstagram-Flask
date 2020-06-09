@@ -1,0 +1,24 @@
+<html>
+<head>
+</head>
+<body>
+<p>{{friendGroup.groupName}} by {% if friendGroup.creatorUsername!=user %}{{friendGroup.creatorUsername}}{% else %}You{% endif %}</p>
+
+<p><a href="/home">Home</a> <a href="/friendGroups">Friend Groups</a> <a href="/tags">Manage Tags</a> <a href="/follows">Manage Follows</a> <a href="/logout">Log Out</a></p>
+
+{{description}}
+
+<p><strong>Group Members</strong></br> ({{count.c}})
+{% for member in members %}
+    {{member.memberUsername}}</br>
+{% endfor %}
+</br>
+</p>
+
+{% for photo in posts %}
+	<p><img src="/uploads/{{photo.pID}}.jpg" width=400px height=400px alt="{{photo.pID}}.jpg"/></br>
+	Photo ID: {{photo.pID}} <a href="/viewPhoto/{{photo.pID}}">More</a></p>
+{% endfor %}
+
+</body>
+</html>

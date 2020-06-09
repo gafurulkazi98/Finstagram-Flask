@@ -27,6 +27,7 @@
 	<th>Group Name</th>
 	<th>Creator</th>
 	<th>Description</th>
+	<th>Members</th>
 	
 {% for friendGroup in friendGroups %}
 	<tr>
@@ -37,6 +38,7 @@
 			<td>{{friendGroup.creatorUsername}}</td>
 		{% endif %}
 		<td>{{friendGroup.description}}</td>
+		<td>{{friendGroup.c}}</td>
 	</tr>
 {% endfor %}
 

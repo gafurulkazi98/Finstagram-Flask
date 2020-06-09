@@ -3,7 +3,7 @@
 Finstagram Code by Gafurul (Rafi) Islam Kazi - gik211
 """
 
-#cd "Documents\GitHub\Finstagram
+#cd Documents\GitHub\Finstagram
 
 from flask import Flask, render_template, request, session, url_for, redirect, send_from_directory
 import pymysql.cursors
@@ -269,18 +269,41 @@ def submitPost():
     return redirect('/home')
 
 @app.route('/friendGroups')
-def friendGroup():
+def friendGroups():
     try:
         username=session['username']
     except:
         return redirect('/')
     error = request.args.get('error')
     cursor = conn.cursor()
-    query = 'SELECT * FROM friendGroup WHERE (groupName,creatorUsername) IN (SELECT groupName,creatorUsername FROM groupMember WHERE memberUsername = %s)'
+    query = 'SELECT * FROM friendGroup NATURAL JOIN (SELECT COUNT(memberUsername) AS c, groupName, creatorUsername FROM groupmember GROUP BY groupName,creatorUsername) AS memberCount WHERE (groupName,creatorUsername) IN (SELECT groupName,creatorUsername FROM groupMember WHERE memberUsername = %s)'
     cursor.execute(query,(username))
     data = cursor.fetchall()
     cursor.close()
     return render_template('friendGroups.html',friendGroups=data,error=error)
+
+@app.route('/viewFriendGroup')
+def viewFriendGroup():
+    try:
+        username=session['username']
+    except:
+        return redirect('/')
+    groupName = request.args.get('gn')
+    creatorUsername = request.args.get('cu')
+    cursor = conn.cursor()
+    query = 'SELECT description FROM friendGroup WHERE groupName = %s AND creatorUsername = %s'
+    cursor.execute(query,(groupName,creatorUsername))
+    description = cursor.fetchone()
+    query = 'SELECT memberUsername FROM groupmember WHERE groupName = %s AND creatorUsername = %s'
+    cursor.execute(query,(groupName,creatorUsername))
+    members = cursor.fetchall()
+    query = 'SELECT COUNT(memberUsername) AS c FROM groupmember WHERE groupName = %s AND creatorUsername = %s'
+    cursor.execute(query,(groupName,creatorUsername))
+    count = cursor.fetchone()
+    query = 'SELECT pID FROM share WHERE groupName = %s AND creatorUsername = %s'
+    cursor.execute(query,(groupName,creatorUsername))
+    posts = cursor.fetchall()
+    return render_template('viewFriendGroup.html',description=description,groupName=groupName,creatorUsername=creatorUsername,members=members,count=count,posts=posts)
 
 @app.route('/authFriendGroup', methods = ['GET', 'POST'])
 def authFriendGroup():

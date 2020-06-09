@@ -2,13 +2,13 @@
 <head>
 </head>
 <body>
-<p>{{friendGroup.groupName}} by {% if friendGroup.creatorUsername!=user %}{{friendGroup.creatorUsername}}{% else %}You{% endif %}</p>
+<p>{{groupName}} by {% if creatorUsername!=user %}{{creatorUsername}}{% else %}You{% endif %}</p>
 
 <p><a href="/home">Home</a> <a href="/friendGroups">Friend Groups</a> <a href="/tags">Manage Tags</a> <a href="/follows">Manage Follows</a> <a href="/logout">Log Out</a></p>
 
-{{description}}
+{{description.description}}
 
-<p><strong>Group Members</strong></br> ({{count.c}})
+<p><strong>Group Members</strong> ({{count.c}})</br>
 {% for member in members %}
     {{member.memberUsername}}</br>
 {% endfor %}

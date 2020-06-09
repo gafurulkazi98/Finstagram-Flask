@@ -290,19 +290,31 @@ def viewFriendGroup():
         return redirect('/')
     groupName = request.args.get('gn')
     creatorUsername = request.args.get('cu')
+    
     cursor = conn.cursor()
+    
+    query = 'SELECT * FROM groupmember WHERE groupName= %s AND creatorUsername = %s AND memberUsername = %s'
+    cursor.execute(query,(groupName,creatorUsername,username))
+    visible = cursor.fetchone()
+    if visible == None:
+        return render_template('cannotViewFriendGroup.html',user=username)
+    
     query = 'SELECT description FROM friendGroup WHERE groupName = %s AND creatorUsername = %s'
     cursor.execute(query,(groupName,creatorUsername))
     description = cursor.fetchone()
+    
     query = 'SELECT memberUsername FROM groupmember WHERE groupName = %s AND creatorUsername = %s'
     cursor.execute(query,(groupName,creatorUsername))
     members = cursor.fetchall()
+    
     query = 'SELECT COUNT(memberUsername) AS c FROM groupmember WHERE groupName = %s AND creatorUsername = %s'
     cursor.execute(query,(groupName,creatorUsername))
     count = cursor.fetchone()
+    
     query = 'SELECT pID FROM share WHERE groupName = %s AND creatorUsername = %s'
     cursor.execute(query,(groupName,creatorUsername))
     posts = cursor.fetchall()
+    
     return render_template('viewFriendGroup.html',description=description,groupName=groupName,creatorUsername=creatorUsername,members=members,count=count,posts=posts)
 
 @app.route('/authFriendGroup', methods = ['GET', 'POST'])

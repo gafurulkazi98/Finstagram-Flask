@@ -31,7 +31,7 @@
 	
 {% for friendGroup in friendGroups %}
 	<tr>
-		<td>{{friendGroup.groupName}}</td>
+		<td><a href="/viewFriendGroup?gn={{friendGroup.groupName}}&cu={{friendGroup.creatorUsername}}">{{friendGroup.groupName}}</a></td>
 		{% if friendGroup.creatorUsername == user %}
 			<td>You</td>
 		{% else %}

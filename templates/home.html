@@ -6,12 +6,13 @@
 
 <p>Home <a href="/friendGroups">Friend Groups</a> <a href="/tags">Manage Tags</a> <a href="/follows">Manage Follows</a> <a href="/logout">Log Out</a></p>
 
-<!--
-<form action="/searchUser" method="GET">
-	<input type="text" name="searchedUser" placeholder="Search users"/>
-	<input type="submit" value=search />
+<form action="/searchPosts" method="GET">
+    <input type="text" name="searchTerm" placeholder="Search Posts"/>
+    <input type="radio" name="searchMode" value="poster">by poster</input>
+    <input type="radio" name="searchMode" value="tag">by tag</input>
+    <input type="submit" value="Search"/>
 </form>
--->
+
 
 <a href="/newPost">New Post</a></br>
 

@@ -121,6 +121,24 @@ def home():
     data = cursor.fetchall()
     cursor.close()
     return render_template('home.html',user=username,feed=data)
+    
+@app.route('/searchPosts', methods=['GET','POST'])
+def searchPosts():
+    try:
+        username=session['username']
+    except:
+        redirect('/')
+    searchMode = request.args.get('searchMode')
+    searchTerm = request.args.get('searchTerm')
+    cursor = conn.cursor()
+    if searchMode == "poster":
+        query = 'SELECT pID FROM photo WHERE posterUsername = %s'
+    elif searchMode == "tag":
+        query = 'SELECT pID FROM tag WHERE taggedUsername = %s'
+    cursor.execute(query,(searchTerm))
+    results = cursor.fetchall()
+    cursor.close()
+    return render_template("searchPosts.html",results=results,searchTerm=searchTerm,searchMode=searchMode)
 
 @app.route('/viewPhoto/<pID>', methods=['GET','POST'])
 def viewPhoto(pID):
@@ -210,19 +228,6 @@ def submitReaction():
     conn.commit()
     cursor.close()
     return redirect('viewPhoto?pID='+pID)
-    
-# @app.route('/viewPerson/', methods=['GET','POST'])
-# def viewPerson():
-#     try:
-#         username=session['username']
-#     except:
-#         return redirect('/')
-#     viewedUser = request.args.get('username')
-#     cursor = conn.cursor()
-#     query = 'SELECT username,first_name,last_name,email FROM person WHERE username = %s'
-#     cursor.execute(query,viewedUser)
-#     userPageData = cursor.fetchone()
-#     return render_template('viewPerson.html',uData=userPageData,viewingSelf=viewedUser==username)
 
 @app.route('/newPost')
 def newPost():

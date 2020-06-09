@@ -2,7 +2,7 @@
 <head>
 </head>
 <body>
-<p>{{groupName}} by {% if creatorUsername!=user %}{{creatorUsername}}{% else %}You{% endif %}</p>
+<p>{{groupName}} by {{creatorUsername}} {% if creatorUsername==user %}<strong>[You]</strong>{% else %}({{creatorInfo.first_name}} {{creatorInfo.last_name}}){% endif %}</p>
 
 <p><a href="/home">Home</a> <a href="/friendGroups">Friend Groups</a> <a href="/tags">Manage Tags</a> <a href="/follows">Manage Follows</a> <a href="/logout">Log Out</a></p>
 
@@ -10,7 +10,7 @@
 
 <p><strong>Group Members</strong> ({{count.c}})</br>
 {% for member in members %}
-    {{member.memberUsername}}</br>
+    {{member.username}} ({{member.first_name}} {{member.last_name}})</br>
 {% endfor %}
 </br>
 </p>

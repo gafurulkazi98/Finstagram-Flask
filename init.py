@@ -303,7 +303,11 @@ def viewFriendGroup():
     cursor.execute(query,(groupName,creatorUsername))
     description = cursor.fetchone()
     
-    query = 'SELECT memberUsername FROM groupmember WHERE groupName = %s AND creatorUsername = %s'
+    query = 'SELECT first_name, last_name FROM person WHERE username = %s'
+    cursor.execute(query,(creatorUsername))
+    creatorInfo = cursor.fetchone()
+    
+    query = 'SELECT username, first_name, last_name FROM person WHERE username IN (SELECT memberUsername FROM groupmember WHERE groupName = %s AND creatorUsername = %s)'
     cursor.execute(query,(groupName,creatorUsername))
     members = cursor.fetchall()
     
@@ -315,7 +319,7 @@ def viewFriendGroup():
     cursor.execute(query,(groupName,creatorUsername))
     posts = cursor.fetchall()
     
-    return render_template('viewFriendGroup.html',description=description,groupName=groupName,creatorUsername=creatorUsername,members=members,count=count,posts=posts)
+    return render_template('viewFriendGroup.html',description=description,creatorInfo=creatorInfo,groupName=groupName,creatorUsername=creatorUsername,members=members,count=count,posts=posts)
 
 @app.route('/authFriendGroup', methods = ['GET', 'POST'])
 def authFriendGroup():

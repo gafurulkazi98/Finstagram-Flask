@@ -13,12 +13,12 @@ Posted By: {{pData.posterUsername}} ({{pData.first_name}} {{pData.last_name}}) {
 
 <p><strong>Tags</strong> ({{ tCount }})</br>
 {% for tag in tData %}
-	{{tag.username}} ({{tag.first_name}} {{tag.last_name}})</br>
+	@{{tag.username}} ({{tag.first_name}} {{tag.last_name}})</br>
 {% endfor %}
 {% if error == '1' %}
 	<p class='error'><strong>Error:</strong> Invalid username</p>
 {% endif %}
-<form action="/submitTag?pID={{pData.pID}}" method="POST"> <input type="text" name="newTag" placeholder="Add tag"> <input type="submit" value="Add Tag"></form>
+<form action="/submitTag?pID={{pData.pID}}" method="POST"> @<input type="text" name="newTag" placeholder="Add tag"> <input type="submit" value="Add Tag"></form>
 </p>
 
 

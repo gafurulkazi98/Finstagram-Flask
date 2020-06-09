@@ -10,9 +10,32 @@
 
 <p><strong>Group Members</strong> ({{memberCount}})</br>
 {% for member in members %}
-    {{member.username}} ({{member.first_name}} {{member.last_name}})</br>
+    {{member.username}} ({{member.first_name}} {{member.last_name}})
+    {% if creatorUserame == member.username %}
+        [Group Creator]
+    {% endif %}
+    {% if user == member.username %}
+        <strong>[You]</strong>
+    {% endif %}
+    {% if creatorUsername == user and member.username != user %}
+        <a href="/removeFriend?cu={{creatorUsername}}&gn={{groupName}}&mu={{member.username}}">Remove</a>
+    {% endif %}
+    </br>
 {% endfor %}
 </br>
+
+{% if creatorUsername == user %}
+<form action="/addFriend?cu={{creatorUsername}}&gn={{groupName}}" method="POST">
+    <input type="text" name="newFriend" list="followerOptions" placeholder="Add new group members from followers" size=40>
+    <datalist id="followerOptions">
+    {% for follower in followers %}
+        <option value="{{follower.followerUsername}}">{{follower.followerUsername}}</option>
+    {% endfor %}
+    </datalist>
+    <input type="submit" value="Add friend"/>
+</form>
+{% endif %}
+
 </p>
 
 {% for photo in posts %}

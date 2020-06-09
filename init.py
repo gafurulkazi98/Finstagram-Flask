@@ -321,7 +321,13 @@ def viewFriendGroup():
     cursor.execute(query,(groupName,creatorUsername))
     posts = cursor.fetchall()
     
-    return render_template('viewFriendGroup.html',description=description,creatorInfo=creatorInfo,groupName=groupName,creatorUsername=creatorUsername,members=members,memberCount=memberCount,posts=posts)
+    query = 'SELECT DISTINCT followerUsername FROM follow WHERE followeeUsername = %s AND followStatus = 1 AND (followerUsername) NOT IN (SELECT memberUsername FROM groupmember WHERE groupName = %s AND creatorUsername = %s)'
+    cursor.execute(query,(username,groupName,creatorUsername))
+    followers = cursor.fetchall()
+    
+    cursor.close()
+    
+    return render_template('viewFriendGroup.html',description=description,creatorInfo=creatorInfo,groupName=groupName,creatorUsername=creatorUsername,members=members,memberCount=memberCount,posts=posts,followers=followers,user=username)
 
 @app.route('/authFriendGroup', methods = ['GET', 'POST'])
 def authFriendGroup():
@@ -347,6 +353,38 @@ def authFriendGroup():
         conn.commit()
         cursor.close()
         return redirect("/friendGroups")
+    
+@app.route('/addFriend', methods=['GET','POST'])
+def addFriend():
+    try:
+        username=session['username']
+    except:
+        return redirect('/')
+    memberUsername = request.form['newFriend']
+    creatorUsername = request.args.get('cu')
+    groupName = request.args.get('gn')
+    cursor = conn.cursor()
+    ins = 'INSERT INTO groupmember VALUES(%s,%s,%s)'
+    cursor.execute(ins,(groupName,creatorUsername,memberUsername))
+    conn.commit()
+    cursor.close()
+    return redirect('/viewFriendGroup?gn='+groupName+'&cu='+creatorUsername)
+
+@app.route('/removeFriend', methods=['GET','POST'])
+def removeFriend():
+    try:
+        username=session['username']
+    except:
+        return redirect('/')
+    creatorUsername = request.args.get('cu')
+    groupName = request.args.get('gn')
+    memberUsername = request.args.get('mu')
+    cursor = conn.cursor()
+    delete = 'DELETE FROM groupMember WHERE groupName = %s AND creatorUsername = %s AND memberUsername = %s'
+    cursor.execute(delete,(groupName,creatorUsername,memberUsername))
+    conn.commit()
+    cursor.close()
+    return redirect('/viewFriendGroup?gn='+groupName+'&cu='+creatorUsername)
     
 @app.route('/follows')
 def follows():

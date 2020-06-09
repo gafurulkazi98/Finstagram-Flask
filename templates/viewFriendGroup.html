@@ -26,7 +26,7 @@
 
 {% if creatorUsername == user %}
 <form action="/addFriend?cu={{creatorUsername}}&gn={{groupName}}" method="POST">
-    <input type="text" name="newFriend" list="followerOptions" placeholder="Add new group members from followers" size=40>
+    <input type="text" name="newFriend" list="followerOptions" placeholder="Add new group members from followers" size=49>
     <datalist id="followerOptions">
     {% for follower in followers %}
         <option value="{{follower.followerUsername}}">{{follower.followerUsername}}</option>

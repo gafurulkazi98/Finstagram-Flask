@@ -364,6 +364,12 @@ def addFriend():
     creatorUsername = request.args.get('cu')
     groupName = request.args.get('gn')
     cursor = conn.cursor()
+    
+    query = 'SELECT DISTINCT followerUsername FROM follow WHERE followerUsername = %s followeeUsername = %s AND followStatus = 1 AND (followerUsername) NOT IN (SELECT memberUsername FROM groupmember WHERE groupName = %s AND creatorUsername = %s)'
+    cursor.execute(query,(memberUsername,username,groupName,creatorUsername))
+    followerValid = cursor.fetchone()
+    print(followerValid)
+    
     ins = 'INSERT INTO groupmember VALUES(%s,%s,%s)'
     cursor.execute(ins,(groupName,creatorUsername,memberUsername))
     conn.commit()

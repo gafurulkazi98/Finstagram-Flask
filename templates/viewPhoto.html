@@ -10,7 +10,7 @@
 {{pData.caption}}</br>
 Posted By: {{pData.posterUsername}} ({{pData.first_name}} {{pData.last_name}}) {% if pData.posterUsername == user %}[<strong>You</strong>]{% endif %}  on {{pData.postingDate}}</br></p>
 
-<p><strong>Tags</strong> ({{ tCount.c }})</br>
+<p><strong>Tags</strong> ({{ tCount }})</br>
 {% for tag in tData %}
 	{{tag.username}} ({{tag.first_name}} {{tag.last_name}})</br>
 {% endfor %}
@@ -21,7 +21,7 @@ Posted By: {{pData.posterUsername}} ({{pData.first_name}} {{pData.last_name}}) {
 </p>
 
 
-<p><strong>Reactions</strong> ({{ rCount.c }})</br>
+<p><strong>Reactions</strong> ({{ rCount }})</br>
 <form action="/submitReaction?pID={{pData.pID}}" method="POST" name="reaction">
 	<input type="radio" name="emoji" value="👍" checked="checked">👍</input>
 	<input type="radio" name="emoji" value="❤️">❤️</input>
@@ -34,24 +34,28 @@ Posted By: {{pData.posterUsername}} ({{pData.first_name}} {{pData.last_name}}) {
 	<input type="submit" value="Post">
 </form>
 
-<style type="text/css">
-	table, tr{
-		border: 1px solid black;
-	}
-</style>
-
-<table>
-    <th>User</th>
-    <th>Time</th>
-    <th>Reaction</th>
+{% if noReactions %}
+    Be the first to react!
+{% else %}
+    <style type="text/css">
+    	table, tr{
+    		border: 1px solid black;
+    	}
+    </style>
     
-{% for reaction in rData %}
-	<tr>
-    	<td>{{reaction.reactorUsername}}</td>
-    	<td>[{{reaction.reactionTime}}]</td>
-    	<td>{{reaction.emoji}} {{reaction.comment}}</td>
-    </tr>
-{% endfor %}
+    <table>
+        <th>User</th>
+        <th>Time</th>
+        <th>Reaction</th>
+
+    {% for reaction in rData %}
+    	<tr>
+        	<td>{{reaction.reactorUsername}}</td>
+        	<td>[{{reaction.reactionTime}}]</td>
+        	<td>{{reaction.emoji}} {{reaction.comment}}</td>
+        </tr>
+    {% endfor %}
+{% endif %}
 </table>
 </p>
 

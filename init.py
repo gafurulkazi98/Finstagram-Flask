@@ -146,19 +146,19 @@ def viewPhoto(pID):
     query = 'SELECT reactorUsername,reactionTime,comment,emoji FROM reaction WHERE pID = %s ORDER BY reactionTime DESC'
     cursor.execute(query,(pID))
     reactionData = cursor.fetchall()
-    query = 'SELECT COUNT(*) AS c FROM reaction WHERE pID = %s'
-    cursor.execute(query,(pID))
-    reactionCount = cursor.fetchone()
+    reactionCount = len(reactionData)
+    if reactionCount == 0:
+        noReactions = True
+    else:
+        noReactions = False
     
     query = 'SELECT username,first_name,last_name FROM person WHERE (username) IN (SELECT taggedUsername FROM tag WHERE tagStatus = 1 AND pID = %s)'
     cursor.execute(query,(pID))
     tagData = cursor.fetchall()
-    query = 'SELECT COUNT(*) AS c FROM person WHERE (username) IN (SELECT taggedUsername FROM tag WHERE tagStatus = 1 AND pID = %s)'
-    cursor.execute(query,(pID))
-    tagCount = cursor.fetchone()
+    tagCount = len(tagData)
     
     cursor.close()
-    return render_template('viewPhoto.html',user=username,pData=photoData,rData=reactionData,rCount=reactionCount,tData=tagData,tCount=tagCount,error=error)
+    return render_template('viewPhoto.html',user=username,pData=photoData,rData=reactionData,rCount=reactionCount,noReactions=noReactions,tData=tagData,tCount=tagCount,error=error)
 
 @app.route('/submitTag',methods=['GET','POST'])
 def submitTag():

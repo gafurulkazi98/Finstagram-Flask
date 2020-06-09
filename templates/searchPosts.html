@@ -7,7 +7,7 @@
 <p><a href ="/home">Home</a> <a href="/friendGroups">Friend Groups</a> <a href="/tags">Manage Tags</a> <a href="/follows">Manage Follows</a> <a href="/logout">Log Out</a></p>
 
 <form action="/searchPosts" method="GET">
-    <input type="text" name="searchedPost" placeholder="{{searchTerm}}"/>
+    <input type="text" name="searchTerm" placeholder="Search Posts" value={{searchTerm}} />
     {% if searchMode == "poster" %}
         <input type="radio" name="searchMode" value="poster" checked="checked">by poster</input>
         <input type="radio" name="searchMode" value="tag">by tag</input>

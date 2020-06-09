@@ -132,10 +132,10 @@ def searchPosts():
     searchTerm = request.args.get('searchTerm')
     cursor = conn.cursor()
     if searchMode == "poster":
-        query = 'SELECT pID FROM photo WHERE posterUsername = %s'
+        query = 'SELECT pID FROM photo WHERE posterUsername = %s AND (pID) IN (SELECT DISTINCT pID FROM follow JOIN photo ON followeeUsername = posterUsername WHERE followerUsername = %s AND followStatus = 1 UNION SELECT pID FROM photo WHERE (pID) IN (SELECT pID FROM share WHERE (groupName,creatorUsername) IN (SELECT groupName,creatorUsername FROM groupmember WHERE memberUsername = %s)) UNION SELECT pID FROM photo WHERE posterUsername = %s)'
     elif searchMode == "tag":
-        query = 'SELECT pID FROM tag WHERE taggedUsername = %s'
-    cursor.execute(query,(searchTerm))
+        query = 'SELECT pID FROM tag WHERE taggedUsername = %s AND (pID) IN (SELECT DISTINCT pID FROM follow JOIN photo ON followeeUsername = posterUsername WHERE followerUsername = %s AND followStatus = 1 UNION SELECT pID FROM photo WHERE (pID) IN (SELECT pID FROM share WHERE (groupName,creatorUsername) IN (SELECT groupName,creatorUsername FROM groupmember WHERE memberUsername = %s)) UNION SELECT pID FROM photo WHERE posterUsername = %s)'
+    cursor.execute(query,(searchTerm,username,username,username))
     results = cursor.fetchall()
     cursor.close()
     return render_template("searchPosts.html",results=results,searchTerm=searchTerm,searchMode=searchMode)

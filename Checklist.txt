@@ -18,6 +18,9 @@ To Do (not in any order):
 -Revise addFriend route
 -Clean up queries
 -Look over error processing
+-Add text when no photos in a feed
+-Mark group creator when viewing a friend group
+-Show "People Following You" and "People You Follow" in Follows
 -Add more info to image when displayed in a feed
 -Convey that there is only one reaction per comment, which can only be updated or deleted
 -Unfollow system
@@ -30,5 +33,6 @@ To Do (not in any order):
 -Notifications system
 -Find a cleaner way to remove friends from a group?
 -Find a better way to present comments?
+-Add SECURE_FILENAME?
 -(If possible) Make better web pages using "LayoutIt!"
 >>>>>>> 323d9384aba12f35794ff9088599cbe2f8a79796

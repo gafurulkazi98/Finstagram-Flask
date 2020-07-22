@@ -24,10 +24,6 @@ conn = pymysql.connect(host='localhost',
                        charset='utf8mb4',
                        cursorclass=pymysql.cursors.DictCursor)
 
-def readFile(filepath):
-    with open(filepath,"r") as f:
-        return f.read()
-
 #These routes are meant for debugging purposes only
 @app.route('/debug1')
 def debug1():
@@ -40,7 +36,7 @@ def debug2():
     print(comment,emoji)
     return render_template('debug.html', comment=comment,emoji=emoji)
 
-#Log in form
+#Login page route
 @app.route('/')
 def login():
     #Check for existing session
@@ -48,28 +44,35 @@ def login():
         username = session['username']
         return redirect(url_for('home'))
     except:
-        error_arg = request.args.get('error')
+        error_arg = request.args.get('error') #Note to self: Check if you can move this to front-end
         errorStr = None
         if error_arg == "1":
             errorStr = 'Invalid username or password'
         return render_template('login.html',error=errorStr)
 
-#Account registration form
+#Account registration page route
 @app.route('/register')
 def register():
-    error_arg = request.args.get('error')
-    errorStr = None
-    if error_arg == "1":
-        errorStr = "Username is taken"
-    elif error_arg == "2":
-        errorStr = "Passwords do not match"
-    elif error_arg == "3":
-        errorStr = "Username must only include alphanumeric characters"
-    return render_template('register.html',error=errorStr)
+    #Check for existing session
+    try:
+        username = session['username']
+        return redirect(url_for('home'))
+    except:
+        error_arg = request.args.get('error')
+        errorStr = None
+        
+        if error_arg == "1": #Note to self: Check if you can move this to front-end
+            errorStr = "Username is taken"
+        elif error_arg == "2":
+            errorStr = "Passwords do not match"
+        elif error_arg == "3":
+            errorStr = "Username must only include alphanumeric characters"
+        return render_template('register.html',error=errorStr)
 
-#Login Authentication: Rejects login if no username exists with given password
+#Login authentication route: Rejects login if no username exists with given password
 @app.route('/loginAuth', methods=['GET', 'POST'])
 def loginAuth():
+    #Retrieval of argument from form
     username = request.form['username']
     
     #All passwords are salted and hashed
@@ -90,7 +93,7 @@ def loginAuth():
     else:
         return redirect('/?error=1')
 
-#Registration Authorization: Rejects registration if verification check failed, username already exists, or invalid character used in username
+#Registration authentication route: Rejects registration if verification check failed, username already exists, or invalid character used in username
 @app.route('/registerAuth', methods=['GET', 'POST'])
 def registerAuth():
     #Read from form
@@ -120,12 +123,14 @@ def registerAuth():
     if(data):
         return redirect('/register?error=1')
     
-    #Insertion of new person into database and commencement of session
+    #Insertion of new person into database
     hashword = hashlib.sha256(password.encode('utf-8')).hexdigest()
     ins = 'INSERT INTO person VALUES(%s, %s, %s, %s, %s)'
     cursor.execute(ins, (username, hashword, firstName, lastName, email))
     conn.commit()
     cursor.close()
+    
+    #Commence session
     session['username']=username
     return redirect(url_for('home'))
     
@@ -143,7 +148,7 @@ def home():
     except:
         return redirect('/')
     
-    #Query to etrieve posts visible to this user
+    #Query to retrieve posts visible to this user
     cursor = conn.cursor()
     query = 'SELECT DISTINCT pID,postingDate,posterUsername FROM follow JOIN photo ON followeeUsername = posterUsername WHERE followerUsername = %s AND followStatus = 1 UNION SELECT pID,postingDate,posterUsername FROM photo WHERE (pID) IN (SELECT pID FROM share WHERE (groupName,creatorUsername) IN (SELECT groupName,creatorUsername FROM groupmember WHERE memberUsername = %s)) UNION SELECT pID,postingDate,posterUsername FROM photo WHERE posterUsername = %s ORDER BY postingDate DESC'
     cursor.execute(query, (username,username,username))
@@ -151,7 +156,7 @@ def home():
     cursor.close()
     return render_template('home.html',user=username,feed=data)
     
-#Post searching page route
+#Post search page route
 @app.route('/searchPosts', methods=['GET','POST'])
 def searchPosts():
     #Check for existing session
@@ -160,15 +165,15 @@ def searchPosts():
     except:
         redirect('/')
     #Retrieval of URL arguments
-    #Note: Following conventions seen on other websites, arguments are retrieved from URL instead of a form
+    #Note: Following conventions seen on other websites regarding search functions, arguments are retrieved from URL instead of a form
     searchMode = request.args.get('searchMode')
     searchTerm = request.args.get('searchTerm')
     
-    #Query for posts that fit qualifications
+    #Query for posts that fit criteria
     cursor = conn.cursor()
-    if searchMode == "poster":
+    if searchMode == "poster": #Look for posts posted by a certain user
         query = 'SELECT pID FROM photo WHERE posterUsername = %s AND (pID) IN (SELECT DISTINCT pID FROM follow JOIN photo ON followeeUsername = posterUsername WHERE followerUsername = %s AND followStatus = 1 UNION SELECT pID FROM photo WHERE (pID) IN (SELECT pID FROM share WHERE (groupName,creatorUsername) IN (SELECT groupName,creatorUsername FROM groupmember WHERE memberUsername = %s)) UNION SELECT pID FROM photo WHERE posterUsername = %s)'
-    elif searchMode == "tag":
+    elif searchMode == "tag": #Look for posts where a certain user is tagged
         query = 'SELECT pID FROM tag WHERE taggedUsername = %s AND (pID) IN (SELECT DISTINCT pID FROM follow JOIN photo ON followeeUsername = posterUsername WHERE followerUsername = %s AND followStatus = 1 UNION SELECT pID FROM photo WHERE (pID) IN (SELECT pID FROM share WHERE (groupName,creatorUsername) IN (SELECT groupName,creatorUsername FROM groupmember WHERE memberUsername = %s)) UNION SELECT pID FROM photo WHERE posterUsername = %s)'
     cursor.execute(query,(searchTerm,username,username,username))
     results = cursor.fetchall()
@@ -246,7 +251,7 @@ def submitTag():
     cursor.execute(query,(pID,newTag,newTag,newTag))
     visible = cursor.fetchone()
     
-    #Insertion of tag
+    #Insertion of tag into database
     if username_valid and visible:
         #If tagging self
         if newTag == username:
@@ -369,17 +374,19 @@ def friendGroups():
 #Friend group individial page route
 @app.route('/viewFriendGroup')
 def viewFriendGroup():
+    #Check for existing session
     try:
         username=session['username']
     except:
         return redirect('/')
+    
     #Retrieval of arguments from URL
     groupName = request.args.get('gn')
     creatorUsername = request.args.get('cu')
     
     cursor = conn.cursor()
     
-    #Query for checking if user exists is member of group
+    #Query for checking if user exists as member of group
     query = 'SELECT * FROM groupmember WHERE groupName= %s AND creatorUsername = %s AND memberUsername = %s'
     cursor.execute(query,(groupName,creatorUsername,username))
     visible = cursor.fetchone()
@@ -416,7 +423,7 @@ def viewFriendGroup():
     
     return render_template('viewFriendGroup.html',description=description,creatorInfo=creatorInfo,groupName=groupName,creatorUsername=creatorUsername,members=members,memberCount=memberCount,posts=posts,followers=followers,user=username)
 
-#New frieng group authentication
+#New friend group authentication: Inserts new friend group into database if user does not own a friend group of the same name
 @app.route('/authFriendGroup', methods = ['GET', 'POST'])
 def authFriendGroup():
     #Check for existing session
@@ -463,7 +470,7 @@ def addFriend():
     creatorUsername = request.args.get('cu')
     groupName = request.args.get('gn')
     
-    #Check if 
+    #Check if username given is a valid follower
     cursor = conn.cursor()
     query = 'SELECT DISTINCT followerUsername FROM follow WHERE followerUsername = %s followeeUsername = %s AND followStatus = 1 AND (followerUsername) NOT IN (SELECT memberUsername FROM groupmember WHERE groupName = %s AND creatorUsername = %s)'
     cursor.execute(query,(memberUsername,username,groupName,creatorUsername))
@@ -516,14 +523,20 @@ def follows():
     cursor.execute(query,(username))
     pFollows = cursor.fetchall()
     
-    #Query for accepted followers
+    #Query for people who follow user
     query = 'SELECT followerUsername,first_name,last_name FROM follow JOIN person ON followerUsername = username WHERE followeeUsername = %s AND followStatus = 1'
     cursor.execute(query,(username))
     aFollows = cursor.fetchall()
+    
+    #Query for people who user follows
+    query = 'SELECT followeeUsername,first_name,last_name FROM follow JOIN person ON followeeUsername = username WHERE followerUsername = %s AND followStatus = 1'
+    cursor.execute(query,(username))
+    rFollows = cursor.fetchall()
     cursor.close()
-    return render_template("follows.html",pendingFollows=pFollows,acceptedFollows=aFollows,error=error,notification=notif)
+    
+    return render_template("follows.html",pendingFollows=pFollows,acceptedFollows=aFollows,receivingFollows=rFollows,error=error,notification=notif)
 
-#Creation of new follower request
+#Creation of new follower request: Inserts an inactive follow into the database if username is valid
 @app.route('/newFollowee', methods = ['GET','POST'])
 def newFollowee():
     #Check for existing session
@@ -532,7 +545,7 @@ def newFollowee():
     except:
         return redirect('/')
     
-    #Retrieval of arguments from form
+    #Retrieval of argument from form
     followeeUsername = request.form['newFollowee']
     
     #Query for valid followee username
@@ -555,7 +568,7 @@ def newFollowee():
         cursor.close()
         return redirect("/follows?error=1")
 
-#Accept or Decline follower requests
+#Accept or Decline follower requests route: Activates or deletes a follow request in database depending on given action
 @app.route('/setFollows', methods = ['GET', 'POST'])
 def setFollows():
     #Check for existing session
@@ -597,7 +610,7 @@ def tags():
     tagList = cursor.fetchall()
     return render_template('tags.html',tagList = tagList)
     
-#Accept or Delete Tag route
+#Accept or Delete Tag route: Accepts or Deletes a tag request on a post in database depending on given action
 @app.route('/setTags', methods = ['GET','POST'])
 def setTags():
     #Check for existing session
@@ -611,6 +624,7 @@ def setTags():
     action_split = action_vals.split(',')
     pID = action_split[0]
     action = int(action_split[1])
+    
     cursor = conn.cursor()
     
     #Query to update or delete tag in database

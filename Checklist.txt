@@ -2,11 +2,33 @@ Finstagram Checklist:
 <<<<<<< HEAD
 =======
 -Registration and Login (Done)
--View photo feed (95% Done, photos can't display)
+-View photo feed (Done)
 -Post photos & designate who sees them (Done)
 -View info on photos (Done)
 -Manage Follows (Done)
 -Create Friend Groups (Done)
 -Manage Tags (Done)
 -React to a photo (Done)
+-Search posts by poster and tag (Done)
+-Friend Group pages (Done)
+-Document all existing code (in progress, 90% done)
+
+To Do (not in any order):
+-Revise newFollower route
+-Revise addFriend route
+-Clean up queries
+-Look over error processing
+-Add more info to image when displayed in a feed
+-Convey that there is only one reaction per comment, which can only be updated or deleted
+-Unfollow system
+-User pages => Show posts, tags and comments (if following?)
+-Re-implement searching => Search users, in captions and comments
+-Implement one-click Follower request accept/decline system
+-User-controlled privacy (must come after user pages)
+-Asychronous Direct Messaging system
+-Reaction Reply implementation
+-Notifications system
+-Find a cleaner way to remove friends from a group?
+-Find a better way to present comments?
+-(If possible) Make better web pages using "LayoutIt!"
 >>>>>>> 323d9384aba12f35794ff9088599cbe2f8a79796

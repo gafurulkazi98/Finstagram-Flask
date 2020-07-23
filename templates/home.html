@@ -16,10 +16,18 @@
 
 <a href="/newPost">New Post</a></br>
 
-{% for photo in feed %}
-	<p><img src="/uploads/{{photo.pID}}.jpg" width=400px height=400px alt="{{photo.pID}}.jpg"/></br>
-	Photo ID: {{photo.pID}} <a href="/viewPhoto/{{photo.pID}}">More</a></p>
-{% endfor %}
+{% if pCount==0 %}
+    No posts yet...
+    Try sending some follow requests
+{% else %}
+    {% for photo in feed %}
+    	<p><img src="/uploads/{{photo.pID}}.jpg" width=400px height=400px alt="{{photo.pID}}.jpg"/></br>
+    	ID: {{photo.pID}}:
+    	{% if photo.tc==None %}0{% else %}{{photo.tc}}{% endif %}🏷️ 
+    	{% if photo.rc==None %}0{% else %}{{photo.rc}}{% endif %}💬 
+    	<a href="/viewPhoto/{{photo.pID}}">More</a></p>
+    {% endfor %}
+{% endif %}
 </body>
 
 </html>

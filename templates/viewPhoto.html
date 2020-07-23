@@ -35,7 +35,7 @@ Posted By: {{pData.posterUsername}} ({{pData.first_name}} {{pData.last_name}}) {
 	<input type="submit" value="Post">
 </form>
 
-{% if noReactions %}
+{% if rCount==0 %}
     Be the first to react!
 {% else %}
     <style type="text/css">

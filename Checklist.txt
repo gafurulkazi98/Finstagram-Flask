@@ -13,14 +13,13 @@ Finstagram Checklist:
 -Friend Group pages (Done)
 -Document all existing code (Done)
 -Revise newFollower route (Done)
--Clean up queries (in progress)
--Add more info to image when displayed in a feed (in progress)
+-Mark group creator when viewing a friend group (Done)
+-Add text when no photos in a feed (Done)
+-Add more info to image when displayed in a feed (Done)
 
 To Do (not in any order):
--Revise removeFriend route
+-Clean up queries
 -Look over error processing
--Add text when no photos in a feed
--Mark group creator when viewing a friend group
 -Show "People Following You" and "People You Follow" in Follows
 -Convey that there is only one reaction per comment, which can only be updated or deleted
 -Unfollow system
@@ -31,6 +30,7 @@ To Do (not in any order):
 -Asychronous Direct Messaging system
 -Reaction Reply implementation
 -Notifications system
+-Post Views tracking
 -Find a cleaner way to remove friends from a group?
 -Find a better way to present comments?
 -Add SECURE_FILENAME?

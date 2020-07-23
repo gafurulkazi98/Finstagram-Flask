@@ -151,7 +151,7 @@ def home():
     #Query to retrieve posts visible to this user
     cursor = conn.cursor()
     #The section after the second UNION is to be removed when user pages are implemented
-    query = 'SELECT DISTINCT pID,postingDate,posterUsername FROM follow JOIN photo ON followeeUsername = posterUsername WHERE followerUsername = %s AND followStatus = 1 UNION SELECT pID,postingDate,posterUsername FROM photo WHERE (pID) IN (SELECT pID FROM share WHERE (groupName,creatorUsername) IN (SELECT groupName,creatorUsername FROM groupmember WHERE memberUsername = %s)) UNION SELECT pID,postingDate,posterUsername FROM photo WHERE posterUsername = %s ORDER BY postingDate DESC'
+    query = 'SELECT photo.pID, posterUsername, postingDate, rc, tc FROM follow JOIN photo ON followeeUsername = posterUsername LEFT JOIN (SELECT pID, COUNT(reactorUsername) AS rc FROM reaction GROUP BY pID) AS r ON r.pID = photo.pID LEFT JOIN (SELECT pID, SUM(tagStatus) AS tc FROM tag GROUP BY pID) AS t ON t.pID = photo.pID WHERE followerUsername = %s AND followStatus = 1 UNION SELECT photo.pID, posterUsername, postingDate, rc, tc FROM photo  LEFT JOIN (SELECT pID, COUNT(reactorUsername) AS rc FROM reaction GROUP BY pID) AS r ON r.pID = photo.pID LEFT JOIN (SELECT pID, SUM(tagStatus) AS tc FROM tag GROUP BY pID) AS t ON t.pID = photo.pID WHERE (photo.pID) IN (SELECT pID FROM share WHERE (groupName,creatorUsername) IN (SELECT groupName,creatorUsername FROM groupmember WHERE memberUsername = %s)) UNION SELECT photo.pID AS pID, posterUsername, postingDate, rc, tc FROM photo LEFT JOIN (SELECT pID, COUNT(reactorUsername) AS rc FROM reaction GROUP BY pID) AS r ON r.pID = photo.pID LEFT JOIN (SELECT pID, SUM(tagStatus) AS tc FROM tag GROUP BY pID) AS t ON t.pID = photo.pID WHERE posterUsername=%s ORDER BY postingDate DESC'
     cursor.execute(query, (username,username,username))
     data = cursor.fetchall()
     cursor.close()
@@ -414,6 +414,7 @@ def viewFriendGroup():
     query = 'SELECT pID FROM share WHERE groupName = %s AND creatorUsername = %s'
     cursor.execute(query,(groupName,creatorUsername))
     posts = cursor.fetchall()
+    pCount = len(posts)
     
     #Query for follower information
     query = 'SELECT DISTINCT followerUsername FROM follow WHERE followeeUsername = %s AND followStatus = 1 AND (followerUsername) NOT IN (SELECT memberUsername FROM groupmember WHERE groupName = %s AND creatorUsername = %s)'
@@ -422,7 +423,7 @@ def viewFriendGroup():
     
     cursor.close()
     
-    return render_template('viewFriendGroup.html',description=description,creatorInfo=creatorInfo,groupName=groupName,creatorUsername=creatorUsername,members=members,memberCount=memberCount,posts=posts,followers=followers,user=username)
+    return render_template('viewFriendGroup.html',description=description,creatorInfo=creatorInfo,groupName=groupName,creatorUsername=creatorUsername,members=members,memberCount=memberCount,posts=posts,pCount=pCount,followers=followers,user=username)
 
 #New friend group authentication: Inserts new friend group into database if user does not own a friend group of the same name
 @app.route('/authFriendGroup', methods = ['GET', 'POST'])

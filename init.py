@@ -150,6 +150,7 @@ def home():
     
     #Query to retrieve posts visible to this user
     cursor = conn.cursor()
+    #The section after the second UNION is to be removed when user pages are implemented
     query = 'SELECT DISTINCT pID,postingDate,posterUsername FROM follow JOIN photo ON followeeUsername = posterUsername WHERE followerUsername = %s AND followStatus = 1 UNION SELECT pID,postingDate,posterUsername FROM photo WHERE (pID) IN (SELECT pID FROM share WHERE (groupName,creatorUsername) IN (SELECT groupName,creatorUsername FROM groupmember WHERE memberUsername = %s)) UNION SELECT pID,postingDate,posterUsername FROM photo WHERE posterUsername = %s ORDER BY postingDate DESC'
     cursor.execute(query, (username,username,username))
     data = cursor.fetchall()
@@ -550,14 +551,11 @@ def newFollowee():
     
     #Query for valid followee username
     cursor = conn.cursor()
-    query = 'SELECT username FROM person AS p WHERE username = %s AND (username) NOT IN (SELECT followeeUsername FROM follow WHERE followerUsername = %s)'
-    cursor.execute(query,(followeeUsername,username))
+    query = 'SELECT username FROM person AS p WHERE username = %s AND (username) NOT IN (SELECT followeeUsername FROM follow WHERE followerUsername = %s) AND username!=%s'
+    cursor.execute(query,(followeeUsername,username,username))
     data = cursor.fetchone()
     
     #If followee exists and is valid, new follow request is inserted into database
-    if followeeUsername == username: #Modify query so that this check isn't needed
-        cursor.close()
-        return redirect("/follows?error=1")
     if(data):
         ins = 'INSERT INTO follow VALUES(%s,%s,0)'
         cursor.execute(ins,(username,followeeUsername))

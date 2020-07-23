@@ -16,10 +16,12 @@ Finstagram Checklist:
 -Mark group creator when viewing a friend group (Done)
 -Add text when no photos in a feed (Done)
 -Add more info to image when displayed in a feed (Done)
+-Look over error processing (Done)
+-Add title to all web pages (Done)
 
 To Do (not in any order):
 -Clean up queries
--Look over error processing
+-Figure out how to add favicon to web pages
 -Show "People Following You" and "People You Follow" in Follows
 -Convey that there is only one reaction per comment, which can only be updated or deleted
 -Unfollow system

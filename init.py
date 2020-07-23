@@ -44,11 +44,8 @@ def login():
         username = session['username']
         return redirect(url_for('home'))
     except:
-        error_arg = request.args.get('error') #Note to self: Check if you can move this to front-end
-        errorStr = None
-        if error_arg == "1":
-            errorStr = 'Invalid username or password'
-        return render_template('login.html',error=errorStr)
+        error = request.args.get('error')
+        return render_template('login.html',error=error)
 
 #Account registration page route
 @app.route('/register')
@@ -58,16 +55,8 @@ def register():
         username = session['username']
         return redirect(url_for('home'))
     except:
-        error_arg = request.args.get('error')
-        errorStr = None
-        
-        if error_arg == "1": #Note to self: Check if you can move this to front-end
-            errorStr = "Username is taken"
-        elif error_arg == "2":
-            errorStr = "Passwords do not match"
-        elif error_arg == "3":
-            errorStr = "Username must only include alphanumeric characters"
-        return render_template('register.html',error=errorStr)
+        error = request.args.get('error')
+        return render_template('register.html',error=error)
 
 #Login authentication route: Rejects login if no username exists with given password
 @app.route('/loginAuth', methods=['GET', 'POST'])

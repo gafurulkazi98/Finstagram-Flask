@@ -1,8 +1,10 @@
 <html>
 <head>
+<title>Finstagram · Register an account</title>
+<link rel="shortcut icon" type="image/x-icon" href="image.ico" />
 </head>
 <body>
-<p>Register a new account:</p>
+<p>Register a new account</p>
 
 <form action="/registerAuth" method="POST">
 	<input type="text" name = "username" placeholder="username" required/> </br>
@@ -12,8 +14,12 @@
 	<input type="text" name = "lastName" placeholder="Last Name" required/></br>
 	<input type="text" name = "email" placeholder="E-mail" required/></br>
 	<input type="submit" value = Register />
-	{% if error %}
-		<p class="error"><strong>Error:</strong> {{error}}</p>
+	{% if error=='1' %}
+		<p class="error"><strong>Error:</strong> Username is taken</p>
+    {% elif error=='2' %}
+        <p class="error"><strong>Error:</strong> Passwords do not match</p>
+    {% elif error=='3' %}
+        <p class="error"><strong>Error:</strong> Username must only include alphanumeric characters</p>
 	{% endif %}
 </form>
 

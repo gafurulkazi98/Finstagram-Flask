@@ -1,5 +1,7 @@
 <html>
 <head>
+<title>Finstagram · Login</title>
+<link rel="shortcut icon" type="image/x-icon" href="image.ico" />
 </head>
 <body>
 <p>Welcome to Finstagram!</p>
@@ -9,8 +11,8 @@
 	<input type="text" name = "username" placeholder="username" required/> </br>
 	<input type="password" name = "password" placeholder="password" required/></br>
 	<input type="submit" value = "Login" />
-	{% if error %}
-		<p class="error"><strong>Error:</strong> {{error}}</p>
+	{% if error=='1' %}
+		<p class="error"><strong>Error:</strong> Invalid username or password</p>
 	{% endif %}
 </form>
 

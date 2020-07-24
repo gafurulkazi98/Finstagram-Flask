@@ -517,15 +517,15 @@ def follows():
     #Query for people who follow user
     query = 'SELECT followerUsername,first_name,last_name FROM follow JOIN person ON followerUsername = username WHERE followeeUsername = %s AND followStatus = 1'
     cursor.execute(query,(username))
-    aFollows = cursor.fetchall()
+    followers = cursor.fetchall()
     
     #Query for people who user follows
     query = 'SELECT followeeUsername,first_name,last_name FROM follow JOIN person ON followeeUsername = username WHERE followerUsername = %s AND followStatus = 1'
     cursor.execute(query,(username))
-    rFollows = cursor.fetchall()
+    followees = cursor.fetchall()
     cursor.close()
     
-    return render_template("follows.html",pendingFollows=pFollows,acceptedFollows=aFollows,receivingFollows=rFollows,error=error,notification=notif)
+    return render_template("follows.html",pendingFollows=pFollows,followers=followers,followees=followees,error=error,notification=notif)
 
 #Creation of new follower request: Inserts an inactive follow into the database if username is valid
 @app.route('/newFollowee', methods = ['GET','POST'])
@@ -582,6 +582,26 @@ def setFollows():
     cursor.close()
     return redirect("follows")
 
+#Unfollow route
+@app.route('/unfollow')
+def unfollow():
+    #Check for existing session
+    try:
+        username=session['username']
+    except:
+        return redirect('/')
+    
+    #Retrieve arguments from URL
+    followeeUsername = request.args.get('fu')
+    
+    #Query to delete follow from database
+    cursor = conn.cursor()
+    stmt = 'DELETE FROM follow WHERE followerUsername = %s AND followeeUsername = %s'
+    cursor.execute(stmt,(username,followeeUsername))
+    conn.commit()
+    cursor.close()
+    return redirect("follows")
+    
 #Tags page route
 @app.route('/tags')
 def tags():

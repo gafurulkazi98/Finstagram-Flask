@@ -18,13 +18,15 @@ Finstagram Checklist:
 -Add more info to image when displayed in a feed (Done)
 -Look over error processing (Done)
 -Add title to all web pages (Done)
+-Show "People Following You" and "People You Follow" in Follows (Done)
+-Unfollow system (Done)
 
 To Do (not in any order):
 -Clean up queries
 -Figure out how to add favicon to web pages
--Show "People Following You" and "People You Follow" in Follows
+-Turn images in a feed into a link directing to post's page
+-Find cleaner way to include Friend Group discriminators in URL
 -Convey that there is only one reaction per comment, which can only be updated or deleted
--Unfollow system
 -User pages => Show posts, tags and comments (if following?)
 -Re-implement search system => Search users, in captions and comments
 -Implement one-click Follower request accept/decline system
@@ -33,7 +35,8 @@ To Do (not in any order):
 -Reaction Reply implementation
 -Notifications system
 -Post Views tracking
--Find a cleaner way to remove friends from a group?
+-Find a cleaner way to remove friends from a group than just to have the removed username in URL?
+-Find a cleaner wat to unfollow people than to just have the unfollowed username in URL?
 -Find a better way to present comments?
 -Add SECURE_FILENAME?
 -(If possible) Make better web pages using "LayoutIt!"

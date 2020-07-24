@@ -20,7 +20,7 @@
 	
 </form>
 
-<p>Your Pending Follows:</br>
+<p>Your Pending Follower Requests:</br>
 {% for follower in pendingFollows %}
 	<form action="/setFollows" method="POST">
 		{{follower.followerUsername}} ({{follower.first_name}} {{follower.last_name}})
@@ -31,9 +31,15 @@
 </p>
 {% endfor %}
 
-<p>Your Accepted Follows:</br>
-{% for follower in acceptedFollows %}
+<p>Your Followers:</br>
+{% for follower in followers %}
 	{{follower.followerUsername}} ({{follower.first_name}} {{follower.last_name}})</br>
+{% endfor %}
+</p>
+
+<p>People You Follow:</br>
+{% for followee in followees %}
+    {{followee.followeeUsername}} ({{followee.first_name}} {{followee.last_name}}) <a href="/unfollow?fu={{followee.followeeUsername}}">Unfollow</a></br>
 {% endfor %}
 </p>
 

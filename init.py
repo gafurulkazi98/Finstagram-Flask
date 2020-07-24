@@ -283,7 +283,7 @@ def submitReaction():
         cursor.execute(ins,(pID,username,comment,emoji))
     conn.commit()
     cursor.close()
-    return redirect('viewPhoto?pID='+pID)
+    return redirect('viewPhoto/'+pID)
 
 #New post page route
 @app.route('/newPost')

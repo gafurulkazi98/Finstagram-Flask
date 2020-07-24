@@ -656,7 +656,7 @@ def setTags():
     cursor.execute(stmt,(username,pID))
     conn.commit()
     cursor.close()
-    if source_page = 'tags':
+    if source_page == 'tags':
         return redirect('tags')
     else:
         return redirect('viewPhoto/'+source_page)

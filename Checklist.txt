@@ -26,6 +26,8 @@ To Do (not in any order):
 -Figure out how to add favicon to web pages
 -Turn images in a feed into a link directing to post's page
 -Find cleaner way to include Friend Group discriminators in URL
+-Find way to select reaction emojis from a drop-down list
+-Find way to select Friend Groups from a drop-down list when making a new post
 -Convey that there is only one reaction per comment, which can only be updated or deleted
 -User pages => Show posts, tags and comments (if following?)
 -Re-implement search system => Search users, in captions and comments

@@ -10,18 +10,15 @@
 
 <p><a href="/home">Back to Home</a></p>
 
-<form action = "/submitPost" method="POST" enctype="multipart/form-data">
-	<input type = "file" name="file" accept="image/png, image/jpeg, image/jpg" required/></br>
-	<input type = "text" name="caption" placeholder="Caption"/></br>
+<form action="/submitPost" method="POST" enctype="multipart/form-data">
+	<input type="file" name="file" accept="image/png, image/jpeg, image/jpg" required/></br>
+	<input type="text" name="caption" placeholder="Caption"/></br>
 	<p>Share with:</br>
-	<input type = "radio" name="shareWith" value="allFollowers" checked="checked">All Followers</input></br>
+	<input type="radio" name="shareWith" value="allFollowers" checked="checked">All Followers</input></br>
 	{% for friendGroup in friendGroups %}
 		<input type="radio" name="shareWith" value={{friendGroup.groupName}},{{friendGroup.creatorUsername}}>{{friendGroup.groupName}} by
-		{% if friendGroup.creatorUsername!=user %}
 			{{friendGroup.creatorUsername}}
-		{% else %}
-			You
-		{% endif %}
+		{% if friendGroup.creatorUsername==user %} <strong>[You]</strong>{% endif %}
 		</input><br>
 	{% endfor %}
 	</p>

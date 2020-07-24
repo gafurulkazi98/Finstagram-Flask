@@ -199,10 +199,6 @@ def viewPhoto(pID):
     cursor.execute(query,(pID))
     reactionData = cursor.fetchall()
     reactionCount = len(reactionData)
-    if reactionCount == 0:
-        noReactions = True
-    else:
-        noReactions = False
     
     #Query to retrieve relevant Tag information
     query = 'SELECT username, first_name, last_name FROM person WHERE (username) IN (SELECT taggedUsername FROM tag WHERE (tagStatus = 1 AND pID = %s) OR (tagStatus = 0 AND pID = %s AND taggedUsername = %s))'
@@ -211,7 +207,7 @@ def viewPhoto(pID):
     tagCount = len(tagData)
     
     cursor.close()
-    return render_template('viewPhoto.html',user=username,pData=photoData,rData=reactionData,rCount=reactionCount,noReactions=noReactions,tData=tagData,tCount=tagCount,error=error)
+    return render_template('viewPhoto.html',user=username,pData=photoData,rData=reactionData,rCount=reactionCount,tData=tagData,tCount=tagCount,error=error)
 
 #Tag submission system
 @app.route('/submitTag',methods=['GET','POST'])
@@ -235,11 +231,13 @@ def submitTag():
     query = "SELECT username FROM person AS p WHERE username = %s AND (username) NOT IN (SELECT taggedUsername FROM tag WHERE pID = %s)"
     cursor.execute(query,(newTag,pID))
     username_valid = cursor.fetchone()
+    print(username_valid)
     
     #Query to see if tag is visible to tagged user
-    query = "SELECT pID FROM photo WHERE pID = %s AND (pID) IN (SELECT DISTINCT pID FROM follow JOIN photo ON followeeUsername = posterUsername WHERE followerUsername = %s AND followStatus = 1 UNION SELECT pID FROM photo WHERE (pID) IN (SELECT pID FROM share WHERE (groupName,creatorUsername) IN (SELECT groupName,creatorUsername FROM groupmember WHERE memberUsername = %s)) UNION SELECT pID FROM photo WHERE posterUsername = %s)"
+    query = "SELECT pID FROM photo WHERE pID = %s AND (pID) IN (SELECT pID FROM follow JOIN photo ON followeeUsername = posterUsername WHERE followerUsername = %s AND followStatus = 1 UNION SELECT pID FROM photo WHERE (pID) IN (SELECT pID FROM share WHERE (groupName,creatorUsername) IN (SELECT groupName,creatorUsername FROM groupmember WHERE memberUsername = %s)) UNION SELECT pID FROM photo WHERE posterUsername = %s)"
     cursor.execute(query,(pID,newTag,newTag,newTag))
     visible = cursor.fetchone()
+    print(visible)
     
     #Insertion of tag into database
     if username_valid and visible:
@@ -251,10 +249,10 @@ def submitTag():
         cursor.execute(ins,(pID,newTag))
         conn.commit()
         cursor.close()
-        return redirect('viewPhoto?pID='+pID)
+        return redirect('viewPhoto/'+pID)
     else:
         cursor.close()
-        return redirect('viewPhoto?pID='+pID+'&error=1')
+        return redirect('viewPhoto/'+pID+'?error=1')
     
 #Reaction submission route
 @app.route('/submitReaction',methods=['GET','POST'])

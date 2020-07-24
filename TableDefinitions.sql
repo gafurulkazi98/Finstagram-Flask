@@ -10,11 +10,10 @@ CREATE TABLE Person (
 
 CREATE TABLE Photo (
         pID INT AUTO_INCREMENT,
+        posterUsername VARCHAR(32),
         postingDate DATETIME,
-        filepath BLOB(255),
         allFollowers BOOLEAN,
         caption VARCHAR(1000),
-        posterUsername VARCHAR(32),
         PRIMARY KEY (pID),
         FOREIGN KEY (posterUsername) REFERENCES Person (username)
 );
@@ -27,9 +26,9 @@ CREATE TABLE FriendGroup (
         FOREIGN KEY (creatorUsername) REFERENCES Person (username)
 );
 
-CREATE TABLE React (
-        reactorUsername VARCHAR(32),
+CREATE TABLE Reaction (
         pID INT,
+        reactorUsername VARCHAR(32),
         reactionTime DATETIME,
         comment VARCHAR(1000),
         emoji BLOB(32),

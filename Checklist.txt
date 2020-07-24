@@ -24,9 +24,9 @@ Finstagram Checklist:
 -Show image on Manage Tags page (Done)
 -Unfollowing and unfriending deletes tags of relevant user from posts that they used to have access to (Done)
 -Fix to allowing accepted tags from View Post page (Done)
+-Manually delete relevant entries from before unfollowing and unfriending deleted tags (Done)
 
 To Do (not in any order):
-----Manually delete relevant entries from before unfollowing and unfriending deleted tags
 -Clean up queries
 -Figure out how to add favicon to web pages
 -Turn images in a feed into a link directing to post's page

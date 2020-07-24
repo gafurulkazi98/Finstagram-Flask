@@ -15,7 +15,15 @@ Posted By: {{pData.posterUsername}} ({{pData.first_name}} {{pData.last_name}}) {
 
 <p><strong>Tags</strong> ({{ tCount }})</br>
 {% for tag in tData %}
-	@{{tag.username}} ({{tag.first_name}} {{tag.last_name}})</br>
+	@{{tag.username}} ({{tag.first_name}} {{tag.last_name}})
+	{% if user == tag.username %}
+    	<form action="/setTags?source={{pData.pID}}" method="POST">
+    		<input type="radio" name="action" value={{tag.pID}},1>Accept</input>
+    		<input type="radio" name="action" value={{tag.pID}},0>Delete</input>
+    		<input type = "submit" value = "Confirm">
+        </form>
+    {% endif %}
+	</br>
 {% endfor %}
 {% if error == '1' %}
 	<p class='error'><strong>Error:</strong> Invalid username</p>

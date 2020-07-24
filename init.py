@@ -205,8 +205,8 @@ def viewPhoto(pID):
         noReactions = False
     
     #Query to retrieve relevant Tag information
-    query = 'SELECT username,first_name,last_name FROM person WHERE (username) IN (SELECT taggedUsername FROM tag WHERE tagStatus = 1 AND pID = %s)'
-    cursor.execute(query,(pID))
+    query = 'SELECT username, first_name, last_name FROM person WHERE (username) IN (SELECT taggedUsername FROM tag WHERE (tagStatus = 1 AND pID = %s) OR (tagStatus = 0 AND pID = %s AND taggedUsername = %s))'
+    cursor.execute(query,(pID,pID,username))
     tagData = cursor.fetchall()
     tagCount = len(tagData)
     
@@ -489,8 +489,14 @@ def removeFriend():
     groupName = request.args.get('gn')
     memberUsername = request.args.get('mu') #Note to self: find way to not need member username in URL
     
-    #Deletion of group member
     cursor = conn.cursor()
+    
+    #Deletion of tags of group member in group's posts
+    delete = 'DELETE FROM tags WHERE taggedUsername = %s AND pID IN (SELECT pID IN share WHERE groupName = %s AND creatorUsername = %s)'
+    cursor.execute(delete,(memberUsername,groupName,creatorUsername))
+    cursor.commit()
+    
+    #Deletion of group member
     delete = 'DELETE FROM groupMember WHERE groupName = %s AND creatorUsername = %s AND memberUsername = %s'
     cursor.execute(delete,(groupName,creatorUsername,memberUsername))
     conn.commit()
@@ -594,8 +600,14 @@ def unfollow():
     #Retrieve arguments from URL
     followeeUsername = request.args.get('fu')
     
-    #Query to delete follow from database
     cursor = conn.cursor()
+    
+    #Query to delete user's tags from posts make by followee
+    stmt = 'DELETE FROM tag WHERE taggedUsername = %s AND pID IN (SELECT pID FROM photo WHERE posterUsername = %s)'
+    cursor.execute(stmt,(username,followeeUsername))
+    conn.commit()
+    
+    #Query to delete follow from database
     stmt = 'DELETE FROM follow WHERE followerUsername = %s AND followeeUsername = %s'
     cursor.execute(stmt,(username,followeeUsername))
     conn.commit()
@@ -628,6 +640,7 @@ def setTags():
         return redirect('/')
     
     #Retrieval of arguments
+    source_page = request.args.get('source')
     action_vals = request.form['action']
     action_split = action_vals.split(',')
     pID = action_split[0]
@@ -643,7 +656,10 @@ def setTags():
     cursor.execute(stmt,(username,pID))
     conn.commit()
     cursor.close()
-    return redirect('tags')
+    if source_page = 'tags':
+        return redirect('tags')
+    else:
+        return redirect('viewPhoto/'+source_page)
 
 #Logout route
 @app.route('/logout')

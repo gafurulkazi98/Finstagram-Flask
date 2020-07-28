@@ -1,12 +1,12 @@
 <html>
 <head>
 <title>Finstagram · Home</title>
-<link rel="shortcut icon" type="image/x-icon" href="image.ico" />
+<link rel="icon" type="image/x-icon" href="favicon.ico"/>
 </head>
 <body>
 <p>Welcome to Finstagram, {{user}}!</p>
 
-<p>Home <a href="/friendGroups">Friend Groups</a> <a href="/tags">Manage Tags</a> <a href="/follows">Manage Follows</a> <a href="/logout">Log Out</a></p>
+<p>Home <a href="/user/{{user}}?m=posts">Your Profile</a> <a href="/friendGroups">Friend Groups</a> <a href="/tags">Manage Tags</a> <a href="/follows">Manage Follows</a> <a href="/logout">Log Out</a></p>
 
 <form action="/searchPosts" method="GET">
     <input type="text" name="searchTerm" placeholder="Search Posts"/>

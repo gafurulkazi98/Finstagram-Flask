@@ -201,13 +201,19 @@ def viewPhoto(pID):
     reactionCount = len(reactionData)
     
     #Query to retrieve relevant Tag information
-    query = 'SELECT username, first_name, last_name FROM person WHERE (username) IN (SELECT taggedUsername FROM tag WHERE (tagStatus = 1 AND pID = %s) OR (tagStatus = 0 AND pID = %s AND taggedUsername = %s))'
-    cursor.execute(query,(pID,pID,username))
+    query = 'SELECT username, first_name, last_name FROM person WHERE (username) IN (SELECT taggedUsername FROM tag WHERE tagStatus = 1 AND pID = %s)'
+    cursor.execute(query,(pID))
     tagData = cursor.fetchall()
     tagCount = len(tagData)
     
+    #Query to retrieve user's tag, if any
+    query = 'SELECT username, first_name, last_name FROM person JOIN tag ON username = taggedUsername WHERE taggedUsername = %s AND pID = %s AND tagStatus = 0'
+    cursor.execute(query,(username,pID))
+    userTag = cursor.fetchone()
+    print(userTag)
+    
     cursor.close()
-    return render_template('viewPhoto.html',user=username,pData=photoData,rData=reactionData,rCount=reactionCount,tData=tagData,tCount=tagCount,error=error)
+    return render_template('viewPhoto.html',user=username,pData=photoData,rData=reactionData,rCount=reactionCount,tData=tagData,tCount=tagCount,userTag=userTag,error=error)
 
 #Tag submission system
 @app.route('/submitTag',methods=['GET','POST'])
@@ -461,7 +467,7 @@ def addFriend():
     
     #Check if username given is a valid follower
     cursor = conn.cursor()
-    query = 'SELECT DISTINCT followerUsername FROM follow WHERE followerUsername = %s followeeUsername = %s AND followStatus = 1 AND (followerUsername) NOT IN (SELECT memberUsername FROM groupmember WHERE groupName = %s AND creatorUsername = %s)'
+    query = 'SELECT DISTINCT followerUsername FROM follow WHERE followerUsername = %s AND followeeUsername = %s AND followStatus = 1 AND (followerUsername) NOT IN (SELECT memberUsername FROM groupmember WHERE groupName = %s AND creatorUsername = %s)'
     cursor.execute(query,(memberUsername,username,groupName,creatorUsername))
     followerValid = cursor.fetchone()
     print(followerValid)
@@ -490,9 +496,9 @@ def removeFriend():
     cursor = conn.cursor()
     
     #Deletion of tags of group member in group's posts
-    delete = 'DELETE FROM tags WHERE taggedUsername = %s AND pID IN (SELECT pID IN share WHERE groupName = %s AND creatorUsername = %s)'
+    delete = 'DELETE FROM tag WHERE taggedUsername = %s AND pID IN (SELECT pID FROM share WHERE groupName = %s AND creatorUsername = %s)'
     cursor.execute(delete,(memberUsername,groupName,creatorUsername))
-    cursor.commit()
+    conn.commit()
     
     #Deletion of group member
     delete = 'DELETE FROM groupMember WHERE groupName = %s AND creatorUsername = %s AND memberUsername = %s'
@@ -658,6 +664,47 @@ def setTags():
         return redirect('tags')
     else:
         return redirect('viewPhoto/'+source_page)
+    
+# User page route
+@app.route('/user/<visitedUsername>')
+def user(visitedUsername):
+    #Check for existing session
+    try:
+        username=session['username']
+    except:
+        return redirect('/')
+    
+    #Retrieval of arguments
+    mode = request.args.get('m')
+    if mode == None:
+        return redirect('/user/'+visitedUsername+'?m=posts')
+    
+    cursor = conn.cursor()
+    
+    #Query for visited user's data
+    query = 'SELECT username, first_name, last_name, email FROM person WHERE username = %s'
+    cursor.execute(query,(visitedUsername))
+    visited = cursor.fetchone()
+    
+    #Query for posts
+    query = 'SELECT photo.pID, posterUsername, postingDate, rc, tc FROM photo LEFT JOIN (SELECT pID, COUNT(reactorUsername) AS rc FROM reaction GROUP BY pID) AS r ON r.pID = photo.pID LEFT JOIN (SELECT pID, SUM(tagStatus) AS tc FROM tag GROUP BY pID) AS t ON t.pID = photo.pID WHERE posterUsername = %s'
+    cursor.execute(query,(visitedUsername))
+    pData = cursor.fetchall()
+    pCount = len(pData)
+    
+    #Query for tags
+    query = 'SELECT photo.pID, posterUsername, postingDate, rc, tc FROM photo LEFT JOIN (SELECT pID, COUNT(reactorUsername) AS rc FROM reaction GROUP BY pID) AS r ON r.pID = photo.pID LEFT JOIN (SELECT pID, SUM(tagStatus) AS tc FROM tag GROUP BY pID) AS t ON t.pID = photo.pID WHERE photo.pID IN (SELECT pID FROM tag WHERE taggedUsername = %s AND tagStatus = 1)'
+    cursor.execute(query,(visitedUsername))
+    tpData = cursor.fetchall()
+    tpCount = len(tpData)
+    
+    #Query for reactions
+    query = 'SELECT photo.pID, posterUsername, postingDate, rc, tc, reactionTime, emoji, comment FROM photo LEFT JOIN (SELECT pID, COUNT(reactorUsername) AS rc FROM reaction GROUP BY pID) AS r ON r.pID = photo.pID LEFT JOIN (SELECT pID, SUM(tagStatus) AS tc FROM tag GROUP BY pID) AS t ON t.pID = photo.pID JOIN (SELECT pID, reactionTime, emoji, comment FROM reaction WHERE reactorUsername = %s) AS ru ON ru.pID = photo.pID WHERE photo.pID IN (SELECT pID FROM reaction WHERE reactorUsername = %s)' #Note to self: Try to make a better version of this query
+    cursor.execute(query,(visitedUsername,visitedUsername))
+    rpData = cursor.fetchall()
+    rpCount = len(rpData)
+    
+    return render_template('user.html',user=username,visited=visited,mode=mode,pData=pData,pCount=pCount,tpData=tpData,tpCount=tpCount,rpData=rpData,rpCount=rpCount)
 
 #Logout route
 @app.route('/logout')

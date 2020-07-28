@@ -6,7 +6,7 @@
 <body>
 <p>Search results</p>
 
-<p><a href ="/home">Home</a> <a href="/friendGroups">Friend Groups</a> <a href="/tags">Manage Tags</a> <a href="/follows">Manage Follows</a> <a href="/logout">Log Out</a></p>
+<p><a href ="/home">Home</a> <a href="/user/{{user}}?m=posts">Your Profile</a> <a href="/friendGroups">Friend Groups</a> <a href="/tags">Manage Tags</a> <a href="/follows">Manage Follows</a> <a href="/logout">Log Out</a></p>
 
 <form action="/searchPosts" method="GET">
     <input type="text" name="searchTerm" placeholder="Search Posts" value={{searchTerm}} />

@@ -25,9 +25,10 @@ Finstagram Checklist:
 -Unfollowing and unfriending deletes tags of relevant user from posts that they used to have access to (Done)
 -Fix to allowing accepted tags from View Post page (Done)
 -Manually delete relevant entries from before unfollowing and unfriending deleted tags (Done)
+-User pages => Show posts, tags and comments (Done)
 
 To Do (not in any order):
--Clean up queries
+-Clean up queries (Revise IF EXISTS and JOIN)
 -Figure out how to add favicon to web pages
 -Turn images in a feed into a link directing to post's page
 -Find cleaner way to include Friend Group discriminators in URL
@@ -35,9 +36,10 @@ To Do (not in any order):
 -Find way to select Friend Groups from a drop-down list when making a new post
 -Add a go-back button for every photo page to redirect to user's previous page
 -Convey that there is only one reaction per comment, which can only be updated or deleted
--User pages => Show posts, tags and comments (if following?)
 -Re-implement search system => Search users, in captions and comments
+-Make the appearence of every username into a link to their user page
 -Consent-based addFriend system: Require both parties to consent to joining friend group
+-Allow users to delete images
 -Implement one-click Follower request accept/decline system
 -User-controlled privacy (must come after user pages)
 -Asychronous Direct Messaging system
@@ -47,6 +49,8 @@ To Do (not in any order):
 -Find a cleaner way to remove friends from a group than just to have the removed username in URL?
 -Find a cleaner wat to unfollow people than to just have the unfollowed username in URL?
 -Find a better way to present comments?
+-Get rid of cannotView pages? Insert their content into an if statement on the front end? (HTML will get messy?)
+-Try 'input pattern attributes' on the front-end
 -Add SECURE_FILENAME?
 -(If possible) Make better web pages using "LayoutIt!"
 >>>>>>> 323d9384aba12f35794ff9088599cbe2f8a79796

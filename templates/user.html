@@ -1,0 +1,83 @@
+<html>
+<head>
+<title>Finstagram · {% if user==visited.username %}Your{% else %}{{visited.username}}'s{% endif %} User Page</title>
+<link rel="shortcut icon" type="image/x-icon" href="image.ico"/>
+</head>
+<body>
+<p>{% if user==visited.username %}Your {% else %}{{visited.username}}'s {% endif %}User Page</p>
+
+<p><a href="/home">Home</a> {% if user!=visited.username %}<a href="/user/{{user}}?m=posts">Your Profile</a>{% else %}Your Profile{% endif %} <a href="/friendGroups">Friend Groups</a> <a href="/tags">Manage Tags</a> <a href="/follows">Manage Follows</a> <a href="/logout">Log Out</a></p>
+
+<p><strong>{{visited.username}}</strong></br>
+Real Name: {{visited.first_name}} {{visited.last_name}}</br>
+Email: {{visited.email}}</br></p>
+
+{% if mode=="posts" %}<strong>Posts</strong> 
+{% else %}<a href="/user/{{visited.username}}?m=posts">Posts</a>
+{% endif %}
+
+{% if mode=="tags" %}<strong>Tags</strong> 
+{% else %}<a href="/user/{{visited.username}}?m=tags">Tags</a>
+{% endif %}
+
+{% if mode=="reactions" %}<strong>Reactions</strong>
+{% else %}<a href="/user/{{visited.username}}?m=reactions">Reactions</a>
+{% endif %}
+</br>
+
+{% if mode=="posts" %}
+    {% if pCount==0 %}
+        No posts yet...
+    {% else %}
+        {% for photo in pData %}
+        	<p><img src="/uploads/{{photo.pID}}.jpg" width=400px height=400px alt="{{photo.pID}}.jpg"/></br>
+        	ID: {{photo.pID}}:
+        	{% if photo.tc==None %}0{% else %}{{photo.tc}}{% endif %}🏷️ 
+        	{% if photo.rc==None %}0{% else %}{{photo.rc}}{% endif %}💬 
+        	<a href="/viewPhoto/{{photo.pID}}">More</a></p>
+        {% endfor %}
+    {% endif %}
+
+{% elif mode=="tags" %}
+    {% if tpCount==0 %}
+        No tags yet...
+    {% else %}
+        {% for photo in tpData %}
+        	<p><img src="/uploads/{{photo.pID}}.jpg" width=400px height=400px alt="{{photo.pID}}.jpg"/></br>
+        	ID: {{photo.pID}}:
+        	{% if photo.tc==None %}0{% else %}{{photo.tc}}{% endif %}🏷️ 
+        	{% if photo.rc==None %}0{% else %}{{photo.rc}}{% endif %}💬 
+        	<a href="/viewPhoto/{{photo.pID}}">More</a></p>
+        {% endfor %}
+    {% endif %}
+
+{% elif mode=="reactions" %}
+    {% if rpCount==0 %}
+        No reactions yet...
+    {% else %}
+        {% for photo in rpData %}
+        	<p><img src="/uploads/{{photo.pID}}.jpg" width=400px height=400px alt="{{photo.pID}}.jpg"/></br>
+        	ID: {{photo.pID}}:
+        	{% if photo.tc==None %}0{% else %}{{photo.tc}}{% endif %}🏷️ 
+        	{% if photo.rc==None %}0{% else %}{{photo.rc}}{% endif %}💬 
+        	<a href="/viewPhoto/{{photo.pID}}">More</a></p>
+        	
+            <style type="text/css">table, tr{border: 1px solid black;}</style>
+            <table>
+                <th>User</th>
+                <th>Time</th>
+                <th>Reaction</th>
+        
+            	<tr>
+                	<td>{{visited.username}}</td>
+                	<td>[{{photo.reactionTime}}]</td>
+                	<td>{{photo.emoji}} {{photo.comment}}</td>
+                </tr>
+        	</table></br></br>
+        {% endfor %}
+    {% endif %}
+
+{% endif %}
+
+</body>
+</html>

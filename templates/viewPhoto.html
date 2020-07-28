@@ -6,7 +6,7 @@
 <body>
 <p>Welcome to Finstagram, {{user}}!</p>
 
-<p><a href ="/home">Home</a> <a href="/friendGroups">Friend Groups</a> <a href="/tags">Manage Tags</a> <a href="/follows">Manage Follows</a> <a href="/logout">Log Out</a></p>
+<p><a href ="/home">Home</a> <a href="/user/{{user}}?m=posts">Your Profile</a> <a href="/friendGroups">Friend Groups</a> <a href="/tags">Manage Tags</a> <a href="/follows">Manage Follows</a> <a href="/logout">Log Out</a></p>
 
 <p>Photo ID: {{pData.pID}}</br>
 <img src="/uploads/{{pData.pID}}.jpg" alt="{{pData.pID}}.jpg"/></br>
@@ -14,17 +14,20 @@
 Posted By: {{pData.posterUsername}} ({{pData.first_name}} {{pData.last_name}}) {% if pData.posterUsername == user %}[<strong>You</strong>]{% endif %}  on {{pData.postingDate}}</br></p>
 
 <p><strong>Tags</strong> ({{ tCount }})</br>
+
+{% if userTag.username %}
+{{userTag.username}} ({{userTag.first_name}} {{userTag.last_name}})
+	<form action="/setTags?source={{pData.pID}}" method="POST">
+		<input type="radio" name="action" value={{pData.pID}},1>Accept</input>
+		<input type="radio" name="action" value={{pData.pID}},0>Delete</input>
+		<input type = "submit" value = "Confirm">
+    </form>
+{% endif %}
+
 {% for tag in tData %}
-	@{{tag.username}} ({{tag.first_name}} {{tag.last_name}})
-	{% if user == tag.username %}
-    	<form action="/setTags?source={{pData.pID}}" method="POST">
-    		<input type="radio" name="action" value={{tag.pID}},1>Accept</input>
-    		<input type="radio" name="action" value={{tag.pID}},0>Delete</input>
-    		<input type = "submit" value = "Confirm">
-        </form>
-    {% endif %}
-	</br>
+	@{{tag.username}} ({{tag.first_name}} {{tag.last_name}}) {% if tag.username == user %} <strong>[You]</strong> {% endif %}</br>
 {% endfor %}
+
 {% if error == '1' %}
 	<p class='error'><strong>Error:</strong> Invalid username</p>
 {% endif %}
@@ -66,8 +69,8 @@ Posted By: {{pData.posterUsername}} ({{pData.first_name}} {{pData.last_name}}) {
         	<td>{{reaction.emoji}} {{reaction.comment}}</td>
         </tr>
     {% endfor %}
+    </table>
 {% endif %}
-</table>
 </p>
 
 </html>

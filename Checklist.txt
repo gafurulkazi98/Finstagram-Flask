@@ -26,17 +26,22 @@ Finstagram Checklist:
 -Fix to allowing accepted tags from View Post page (Done)
 -Manually delete relevant entries from before unfollowing and unfriending deleted tags (Done)
 -User pages => Show posts, tags and comments (Done)
+-Turn images in a feed into a link directing to post's page (Done)
+-Convey that there is only one reaction per photo, which can only be updated or deleted (Done)
+-Allow users to delete reactions (Done)
+-Re-implement search system => Search users, in captions and comments (Mostly done)
 
 To Do (not in any order):
+-Rewrite HTML files with conventional formatting
 -Clean up queries (Revise IF EXISTS and JOIN)
 -Figure out how to add favicon to web pages
--Turn images in a feed into a link directing to post's page
 -Find cleaner way to include Friend Group discriminators in URL
 -Find way to select reaction emojis from a drop-down list
 -Find way to select Friend Groups from a drop-down list when making a new post
+-Allow users to edit comments
 -Add a go-back button for every photo page to redirect to user's previous page
--Convey that there is only one reaction per comment, which can only be updated or deleted
--Re-implement search system => Search users, in captions and comments
+-Show post count, tag count and reaction count on user search results
+-Only show photos that user is allowed to see in search results
 -Make the appearence of every username into a link to their user page
 -Consent-based addFriend system: Require both parties to consent to joining friend group
 -Allow users to delete images

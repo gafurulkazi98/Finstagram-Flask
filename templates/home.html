@@ -4,32 +4,36 @@
 <link rel="icon" type="image/x-icon" href="favicon.ico"/>
 </head>
 <body>
-<p>Welcome to Finstagram, {{user}}!</p>
+<h1>Welcome to Finstagram, {{user}}!</h1>
 
-<p>Home <a href="/user/{{user}}?m=posts">Your Profile</a> <a href="/friendGroups">Friend Groups</a> <a href="/tags">Manage Tags</a> <a href="/follows">Manage Follows</a> <a href="/logout">Log Out</a></p>
+<div>Home <a href="/user/{{user}}?m=posts">Your Profile</a> <a href="/friendGroups">Friend Groups</a> <a href="/tags">Manage Tags</a> <a href="/follows">Manage Follows</a> <a href="/logout">Log Out</a></div>
 
-<form action="/searchPosts" method="GET">
+<div><form action="/search" method="GET">
     <input type="text" name="searchTerm" placeholder="Search Posts"/>
-    <input type="radio" name="searchMode" value="poster">by poster</input>
-    <input type="radio" name="searchMode" value="tag">by tag</input>
+    <input type="radio" name="searchMode" value="users">Users</input>
+    <input type="radio" name="searchMode" value="captions">Captions</input>
+    <input type="radio" name="searchMode" value="reactions">Reactions</input>
     <input type="submit" value="Search"/>
 </form>
+</div>
 
+<div><a href="/newPost">New Post</a></br>
+</div>
 
-<a href="/newPost">New Post</a></br>
-
-{% if pCount==0 %}
+<div>{% if pCount==0 %}
     No posts yet...
     Try sending some follow requests
 {% else %}
     {% for photo in feed %}
-    	<p><img src="/uploads/{{photo.pID}}.jpg" width=400px height=400px alt="{{photo.pID}}.jpg"/></br>
+    	<p><a href="/viewPhoto/{{photo.pID}}">
+    	<img src="/uploads/{{photo.pID}}.jpg" width=400px height=400px alt="{{photo.pID}}.jpg"/></a></br>
     	ID: {{photo.pID}}:
     	{% if photo.tc==None %}0{% else %}{{photo.tc}}{% endif %}🏷️ 
     	{% if photo.rc==None %}0{% else %}{{photo.rc}}{% endif %}💬 
     	<a href="/viewPhoto/{{photo.pID}}">More</a></p>
     {% endfor %}
 {% endif %}
-</body>
+</div>
 
+</body>
 </html>

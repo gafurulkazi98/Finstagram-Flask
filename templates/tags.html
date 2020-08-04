@@ -10,7 +10,8 @@
 
 {% for tag in tagList %}
 	<form action="/setTags?source=tags" method="POST">
-		<p><img src="/uploads/{{tag.pID}}.jpg" width=100px height=100px alt="{{tag.pID}}.jpg"/></br>
+		<p><a href="/viewPhoto/{{photo.pID}}">
+		<img src="/uploads/{{tag.pID}}.jpg" width=100px height=100px alt="{{tag.pID}}.jpg"/></a></br>
 		Posted by: {{tag.posterUsername}} on {{tag.postingDate}}
 			(<a href="/viewPhoto/{{tag.pID}}">See</a>)
 		<input type="radio" name="action" value={{tag.pID}},1>Accept</input>

@@ -1,16 +1,44 @@
+<!DOCTYPE html>
 <html>
 <head>
+  <meta charset="utf-8">
+  <title>TABLE, TR or TH/TD</title>
+  <style>
+table {
+  width: 100%;
+}
+tr {
+  background-color: #def;
+}
+th {
+  background-color: #cba;
+}
+td {
+  width: 30%;
+  height: 30px;
+  color: red;
+  background: transparent;
+}
+  </style>
 </head>
 <body>
-
-{% with messages = get_flashed_messages() %}
-    {% if messages %}
-        <ul class=flashes>
-        {% for message in messages %}
-            <li> {{ message }}</li>
-        {% endfor %}
-        </ul>
-    {% endif %}
-{% endwith %}
+<!-- very basic table for illustration only -->
+<table>
+  <tr>
+    <th>Lorem</th>
+    <th>Ipsum</th>
+    <th>Dolor</th>
+  </tr>
+  <tr>
+    <td>Lorem column text</td>
+    <td>Ipsum column text</td>
+    <td>Dolor column text</td>
+  </tr>
+  <tr>
+    <td>Lorem column text</td>
+    <td>Ipsum column text</td>
+    <td>Dolor column text</td>
+  </tr>
+</table>
 </body>
 </html>

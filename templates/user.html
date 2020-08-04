@@ -30,7 +30,8 @@ Email: {{visited.email}}</br></p>
         No posts yet...
     {% else %}
         {% for photo in pData %}
-        	<p><img src="/uploads/{{photo.pID}}.jpg" width=400px height=400px alt="{{photo.pID}}.jpg"/></br>
+        	<p><a href="/viewPhoto/{{photo.pID}}">
+        	<img src="/uploads/{{photo.pID}}.jpg" width=400px height=400px alt="{{photo.pID}}.jpg"/></a></br>
         	ID: {{photo.pID}}:
         	{% if photo.tc==None %}0{% else %}{{photo.tc}}{% endif %}🏷️ 
         	{% if photo.rc==None %}0{% else %}{{photo.rc}}{% endif %}💬 
@@ -43,7 +44,8 @@ Email: {{visited.email}}</br></p>
         No tags yet...
     {% else %}
         {% for photo in tpData %}
-        	<p><img src="/uploads/{{photo.pID}}.jpg" width=400px height=400px alt="{{photo.pID}}.jpg"/></br>
+        	<p><a href="/viewPhoto/{{photo.pID}}">
+        	<img src="/uploads/{{photo.pID}}.jpg" width=400px height=400px alt="{{photo.pID}}.jpg"/></a></br>
         	ID: {{photo.pID}}:
         	{% if photo.tc==None %}0{% else %}{{photo.tc}}{% endif %}🏷️ 
         	{% if photo.rc==None %}0{% else %}{{photo.rc}}{% endif %}💬 
@@ -56,7 +58,8 @@ Email: {{visited.email}}</br></p>
         No reactions yet...
     {% else %}
         {% for photo in rpData %}
-        	<p><img src="/uploads/{{photo.pID}}.jpg" width=400px height=400px alt="{{photo.pID}}.jpg"/></br>
+        	<p><a href="/viewPhoto/{{photo.pID}}">
+        	<img src="/uploads/{{photo.pID}}.jpg" width=400px height=400px alt="{{photo.pID}}.jpg"/></a></br>
         	ID: {{photo.pID}}:
         	{% if photo.tc==None %}0{% else %}{{photo.tc}}{% endif %}🏷️ 
         	{% if photo.rc==None %}0{% else %}{{photo.rc}}{% endif %}💬 

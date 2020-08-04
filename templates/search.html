@@ -1,0 +1,37 @@
+<html>
+<head>
+<title>Finstagram · Search Posts</title>
+<link rel="shortcut icon" type="image/x-icon" href="image.ico" />
+</head>
+<body>
+<h1>Search {{searchMode}} for {{searchTerm}}</h1>
+
+<div><a href ="/home">Home</a> <a href="/user/{{user}}?m=posts">Your Profile</a> <a href="/friendGroups">Friend Groups</a> <a href="/tags">Manage Tags</a> <a href="/follows">Manage Follows</a> <a href="/logout">Log Out</a></div>
+
+<div><form action="/search" method="GET">
+    <input type="text" name="searchTerm" placeholder="Search Posts" value={{searchTerm}} />
+    <input type="radio" name="searchMode" value="users" {% if searchMode=="users" %} checked="checked" {% endif %}>Users</input>
+    <input type="radio" name="searchMode" value="captions" {% if searchMode=="captions" %} checked="checked" {% endif %}>Captions</input>
+    <input type="radio" name="searchMode" value="reactions" {% if searchMode=="reactions" %} checked="checked" {% endif %}>Reactions</input>
+    <input type="submit" value="Search"/>
+</form>
+</div>
+
+<div>{% if resCount==0 %}
+    No results...
+{% else %}
+    {% if searchMode == "users" %}
+        {% for user in results %}
+            <a href="/user/{{user.username}}">{{user.username}}</a>
+        {% endfor %}
+    {% else %}
+        {% for photo in results %}
+        	<div><a href="/viewPhoto/{{photo.pID}}">
+        	<img src="/uploads/{{photo.pID}}.jpg" width=400px height=400px alt="{{photo.pID}}.jpg"/></a></br>
+        	Photo ID: {{photo.pID}} <a href="/viewPhoto/{{photo.pID}}">More</a></div>
+        {% endfor %}
+    {% endif %}
+{% endif %}
+</div>
+
+</html>

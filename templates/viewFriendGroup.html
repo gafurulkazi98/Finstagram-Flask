@@ -43,7 +43,8 @@
     No posts yet...
 {% else %}
     {% for photo in posts %}
-    	<p><img src="/uploads/{{photo.pID}}.jpg" width=400px height=400px alt="{{photo.pID}}.jpg"/></br>
+    	<p><a href="/viewPhoto/{{photo.pID}}">
+    	<img src="/uploads/{{photo.pID}}.jpg" width=400px height=400px alt="{{photo.pID}}.jpg"/></a></br>
     	Photo ID: {{photo.pID}} <a href="/viewPhoto/{{photo.pID}}">More</a></p>
     {% endfor %}
 {% endif %}

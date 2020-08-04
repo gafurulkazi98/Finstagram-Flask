@@ -4,56 +4,94 @@
 <link rel="shortcut icon" type="image/x-icon" href="image.ico" />
 </head>
 <body>
-<p>Welcome to Finstagram, {{user}}!</p>
+<h1>Welcome to Finstagram, {{user}}!</h1>
 
-<p><a href ="/home">Home</a> <a href="/user/{{user}}?m=posts">Your Profile</a> <a href="/friendGroups">Friend Groups</a> <a href="/tags">Manage Tags</a> <a href="/follows">Manage Follows</a> <a href="/logout">Log Out</a></p>
+<div><a href ="/home">Home</a> <a href="/user/{{user}}?m=posts">Your Profile</a> <a href="/friendGroups">Friend Groups</a> <a href="/tags">Manage Tags</a> <a href="/follows">Manage Follows</a> <a href="/logout">Log Out</a></div></br>
 
-<p>Photo ID: {{pData.pID}}</br>
+<div>Photo ID: {{pData.pID}}</br>
 <img src="/uploads/{{pData.pID}}.jpg" alt="{{pData.pID}}.jpg"/></br>
 {{pData.caption}}</br>
-Posted By: {{pData.posterUsername}} ({{pData.first_name}} {{pData.last_name}}) {% if pData.posterUsername == user %}[<strong>You</strong>]{% endif %}  on {{pData.postingDate}}</br></p>
+Posted By: {{pData.posterUsername}} ({{pData.first_name}} {{pData.last_name}}) {% if pData.posterUsername == user %}[<strong>You</strong>]{% endif %}  on {{pData.postingDate}}</br></br>
+</div>
 
-<p><strong>Tags</strong> ({{ tCount }})</br>
-
+<div><strong>Tags</strong> ({{ tCount }})</br>
 {% if userTag.username %}
-{{userTag.username}} ({{userTag.first_name}} {{userTag.last_name}})
-	<form action="/setTags?source={{pData.pID}}" method="POST">
-		<input type="radio" name="action" value={{pData.pID}},1>Accept</input>
-		<input type="radio" name="action" value={{pData.pID}},0>Delete</input>
-		<input type = "submit" value = "Confirm">
-    </form>
+    {{userTag.username}} ({{userTag.first_name}} {{userTag.last_name}})
+    	<form action="/setTags?source={{pData.pID}}" method="POST">
+    		<input type="radio" name="action" value={{pData.pID}},1>Accept</input>
+    		<input type="radio" name="action" value={{pData.pID}},0>Delete</input>
+    		<input type = "submit" value = "Confirm">
+        </form>
 {% endif %}
 
-{% for tag in tData %}
+<div>{% for tag in tData %}
 	@{{tag.username}} ({{tag.first_name}} {{tag.last_name}}) {% if tag.username == user %} <strong>[You]</strong> {% endif %}</br>
 {% endfor %}
+</div>
 
-{% if error == '1' %}
+<div>{% if error == '1' %}
 	<p class='error'><strong>Error:</strong> Invalid username</p>
 {% endif %}
+</div>
 <form action="/submitTag?pID={{pData.pID}}" method="POST"> @<input type="text" name="newTag" placeholder="Add tag"> <input type="submit" value="Add Tag"></form>
-</p>
+</div>
 
 
-<p><strong>Reactions</strong> ({{ rCount }})</br>
-<form action="/submitReaction?pID={{pData.pID}}" method="POST" name="reaction">
-	<input type="radio" name="emoji" value="👍" checked="checked">👍</input>
-	<input type="radio" name="emoji" value="❤️">❤️</input>
-	<input type="radio" name="emoji" value="😄">😄</input>
-	<input type="radio" name="emoji" value="😮">😮</input>
-	<input type="radio" name="emoji" value="😢">😢</input>
-	<input type="radio" name="emoji" value="😡">😡</input></br>
-	
-	<input type="text" name="comment" placeholder="comment" size="31">
-	<input type="submit" value="Post">
-</form>
+<div><strong>Reactions</strong> ({{ rCount }})</br>
+{% if userReaction %}
+    <style type="text/css">
+    	table, th, td{
+    		border: 2px solid black;
+    	}
+    	th, td{
+        	border: 1px solid black;
+    	}
+    	em{
+        	font-style: 
+    	}
+    </style>
+    
+    <table>
+        <caption><strong>Your Reaction</strong></caption>
+        <th>User</th>
+        <th>Time</th>
+        <th>Reaction</th>
+        <th></th>
 
-{% if rCount==0 %}
+       	<tr>
+           	<td>{{user}}</td>
+           	<td>[{{userReaction.reactionTime}}]</td>
+           	<td>{{userReaction.emoji}} {{userReaction.comment}}</td>
+           	<td>Edit <a href="/deleteReaction?pID={{pData.pID}}">Delete</a></td>
+        </tr>
+    </table></br>
+{% else %}
+    <form action="/submitReaction?pID={{pData.pID}}" method="POST" name="reaction">
+    	<input type="radio" name="emoji" value="👍" checked="checked">👍</input>
+    	<input type="radio" name="emoji" value="❤️">❤️</input>
+    	<input type="radio" name="emoji" value="😄">😄</input>
+    	<input type="radio" name="emoji" value="😮">😮</input>
+    	<input type="radio" name="emoji" value="😢">😢</input>
+    	<input type="radio" name="emoji" value="😡">😡</input></br>
+    	
+    	<input type="text" name="comment" placeholder="comment" size="31">
+    	<input type="submit" value="Post">
+    </form>
+{% endif %}
+</div>
+
+<div>{% if rCount==0 %}
     Be the first to react!
 {% else %}
     <style type="text/css">
-    	table, tr{
-    		border: 1px solid black;
+    	table, th, td{
+    		border: 2px solid black;
+    	}
+    	th, td{
+        	border: 1px solid black;
+    	}
+    	em{
+        	font-style: 
     	}
     </style>
     
@@ -61,16 +99,22 @@ Posted By: {{pData.posterUsername}} ({{pData.first_name}} {{pData.last_name}}) {
         <th>User</th>
         <th>Time</th>
         <th>Reaction</th>
+        <th colspan="2"></th>
 
-    {% for reaction in rData %}
-    	<tr>
-        	<td>{{reaction.reactorUsername}}</td>
-        	<td>[{{reaction.reactionTime}}]</td>
-        	<td>{{reaction.emoji}} {{reaction.comment}}</td>
-        </tr>
-    {% endfor %}
+        {% for reaction in rData %}
+           	<tr>
+               	<td>{{reaction.reactorUsername}}</td>
+               	<td>[{{reaction.reactionTime}}]</td>
+               	<td>{{reaction.emoji}} {{reaction.comment}}</td>
+               	{% if reaction.reactorUsername==user %}
+                   	<td>Edit <a href="/deleteReaction?pID={{pData.pID}}">Delete</a></td>
+                {% else %}
+                    <td></td>
+               	{% endif %}
+            </tr>
+        {% endfor %}
     </table>
 {% endif %}
-</p>
+</div>
 
 </html>
